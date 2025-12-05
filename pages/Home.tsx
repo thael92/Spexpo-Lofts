@@ -39,46 +39,56 @@ export const Home: React.FC = () => {
   return (
     <div className="bg-gray-50">
       {/* Hero Section */}
-      <section className="relative min-h-[650px] md:h-[750px] flex items-center bg-neutral-900 overflow-hidden">
+      <section className="relative min-h-[750px] flex items-center overflow-hidden bg-neutral-900">
         
-        {/* Background Image - Occupying ~30% on the right */}
-        <div className="absolute top-0 right-0 w-full md:w-[45%] lg:w-[30%] h-full z-0">
-          <div className="relative h-full w-full">
-            <img 
-              src="/fundo-hero.jpg" 
-              alt="Interior moderno" 
-              className="w-full h-full object-cover opacity-50 md:opacity-100"
-            />
-            {/* Gradient for smooth transition to the dark background */}
-            <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/40 to-transparent md:bg-gradient-to-l md:from-transparent md:via-neutral-900/20 md:to-neutral-900"></div>
-          </div>
+        {/* Full Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="/fundo-hero.jpg" 
+            alt="Interior moderno" 
+            className="w-full h-full object-cover opacity-90"
+          />
+          {/* Subtle dark overlay for better text contrast if needed on edges */}
+          <div className="absolute inset-0 bg-black/30"></div>
         </div>
 
-        <div className="container mx-auto px-4 z-10 relative text-center md:text-left">
-          <div className="max-w-4xl">
-            <span className="inline-block py-1 px-3 rounded-full bg-brand-red/20 border border-brand-red/30 text-red-200 text-sm font-semibold mb-6 backdrop-blur-sm">
+        {/* Red Curved Shape Overlay */}
+        <div className="absolute top-0 left-0 w-full md:w-[65%] h-full z-10 pointer-events-none text-brand-red">
+            <svg 
+                viewBox="0 0 100 100" 
+                preserveAspectRatio="none" 
+                className="w-full h-full fill-current"
+            >
+                {/* Curve logic: Starts top-left, goes right to 70%, curves out to 100% at middle, back to 70% at bottom */}
+                <path d="M0 0 L75 0 Q 100 50 75 100 L 0 100 Z" />
+            </svg>
+        </div>
+
+        <div className="container mx-auto px-4 z-20 relative pt-10">
+          <div className="max-w-4xl text-white">
+            <span className="inline-block py-1 px-3 rounded-full bg-white/20 border border-white/30 text-white text-sm font-semibold mb-6 backdrop-blur-sm">
               Temporada & Estadias Curtas
             </span>
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight drop-shadow-md">
               Conforto de Hotel, <br/>
-              <span className="text-brand-red">Aconchego de Casa</span>
+              Aconchego de Casa
             </h1>
-            <p className="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl font-light leading-relaxed">
+            <p className="text-lg md:text-xl text-red-50 mb-10 font-light leading-relaxed opacity-90 drop-shadow-sm max-w-2xl">
               Apartamentos, Lofts e Studios completos e equipados. A melhor localização para quem vai ao São Paulo Expo.
             </p>
 
             {/* Advanced Search Bar */}
-            <form onSubmit={handleSearch} className="bg-white p-4 rounded-2xl shadow-2xl flex flex-col md:flex-row gap-4 items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <form onSubmit={handleSearch} className="bg-white p-4 md:p-6 rounded-3xl shadow-2xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 items-center animate-in fade-in slide-in-from-bottom-4 duration-700">
               
               {/* Keyword */}
-              <div className="w-full md:w-1/3 flex items-center px-2 border-b md:border-b-0 md:border-r border-gray-100 pb-2 md:pb-0">
-                <MapPin className="text-brand-red mr-3 shrink-0" size={20} />
+              <div className="lg:col-span-4 flex items-center px-4 py-2 border border-gray-200 rounded-xl lg:border-none lg:rounded-none lg:border-r lg:border-gray-100 bg-gray-50 lg:bg-transparent">
+                <MapPin className="text-brand-red mr-3 shrink-0" size={24} />
                 <div className="w-full">
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Localização</label>
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Localização</label>
                     <input 
                     type="text" 
-                    placeholder="Bairro ou ref..." 
-                    className="w-full outline-none text-gray-800 font-medium placeholder-gray-400 bg-transparent"
+                    placeholder="Bairro ou referência..." 
+                    className="w-full h-6 outline-none text-gray-900 font-semibold placeholder-gray-400 bg-transparent text-base"
                     value={searchFilters.query}
                     onChange={(e) => handleFilterChange('query', e.target.value)}
                     />
@@ -86,12 +96,12 @@ export const Home: React.FC = () => {
               </div>
 
               {/* Type */}
-              <div className="w-full md:w-1/4 flex items-center px-2 border-b md:border-b-0 md:border-r border-gray-100 pb-2 md:pb-0">
-                <HomeIcon className="text-brand-red mr-3 shrink-0" size={20} />
-                <div className="w-full">
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Tipo</label>
+              <div className="lg:col-span-3 flex items-center px-4 py-2 border border-gray-200 rounded-xl lg:border-none lg:rounded-none lg:border-r lg:border-gray-100 bg-gray-50 lg:bg-transparent">
+                <HomeIcon className="text-brand-red mr-3 shrink-0" size={24} />
+                <div className="w-full relative">
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Tipo</label>
                     <select 
-                        className="w-full outline-none text-gray-800 font-medium bg-transparent cursor-pointer appearance-none"
+                        className="w-full h-6 outline-none text-gray-900 font-semibold bg-transparent cursor-pointer text-base"
                         value={searchFilters.type}
                         onChange={(e) => handleFilterChange('type', e.target.value)}
                     >
@@ -104,12 +114,12 @@ export const Home: React.FC = () => {
               </div>
 
               {/* Bedrooms */}
-              <div className="w-full md:w-1/5 flex items-center px-2 border-b md:border-b-0 md:border-r border-gray-100 pb-2 md:pb-0">
-                <BedDouble className="text-brand-red mr-3 shrink-0" size={20} />
+              <div className="lg:col-span-2 flex items-center px-4 py-2 border border-gray-200 rounded-xl lg:border-none lg:rounded-none lg:border-r lg:border-gray-100 bg-gray-50 lg:bg-transparent">
+                <BedDouble className="text-brand-red mr-3 shrink-0" size={24} />
                 <div className="w-full">
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Quartos</label>
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Quartos</label>
                     <select 
-                        className="w-full outline-none text-gray-800 font-medium bg-transparent cursor-pointer appearance-none"
+                        className="w-full h-6 outline-none text-gray-900 font-semibold bg-transparent cursor-pointer text-base"
                         value={searchFilters.bedrooms}
                         onChange={(e) => handleFilterChange('bedrooms', e.target.value)}
                     >
@@ -122,12 +132,12 @@ export const Home: React.FC = () => {
               </div>
 
                {/* Price */}
-               <div className="w-full md:w-1/5 flex items-center px-2 pb-2 md:pb-0">
-                <DollarSign className="text-brand-red mr-3 shrink-0" size={20} />
+               <div className="lg:col-span-2 flex items-center px-4 py-2 border border-gray-200 rounded-xl lg:border-none lg:bg-transparent bg-gray-50">
+                <DollarSign className="text-brand-red mr-3 shrink-0" size={24} />
                 <div className="w-full">
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-0.5">Até R$/dia</label>
+                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Max R$/dia</label>
                     <select 
-                        className="w-full outline-none text-gray-800 font-medium bg-transparent cursor-pointer appearance-none"
+                        className="w-full h-6 outline-none text-gray-900 font-semibold bg-transparent cursor-pointer text-base"
                         value={searchFilters.maxPrice}
                         onChange={(e) => handleFilterChange('maxPrice', e.target.value)}
                     >
@@ -140,10 +150,13 @@ export const Home: React.FC = () => {
                 </div>
               </div>
 
-              <button type="submit" className="w-full md:w-auto bg-brand-red hover:bg-red-700 text-white px-8 py-4 rounded-xl font-bold transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2 whitespace-nowrap">
-                <Search size={20} />
-                Buscar
-              </button>
+              {/* Submit Button */}
+              <div className="md:col-span-2 lg:col-span-1 h-full">
+                <button type="submit" className="w-full h-full min-h-[60px] bg-neutral-900 hover:bg-neutral-800 text-white rounded-xl font-bold transition-all transform hover:scale-105 shadow-lg flex items-center justify-center lg:justify-center gap-2">
+                    <Search size={24} />
+                    <span className="lg:hidden">Buscar Imóveis</span>
+                </button>
+              </div>
             </form>
           </div>
         </div>
