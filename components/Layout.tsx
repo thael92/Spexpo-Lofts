@@ -20,11 +20,10 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           <Link to="/" className="flex items-center">
-            {/* Logo in Header */}
             <img 
-              src="/logo.png" 
+              src="/logo.png"
               alt="SP Expo Lofts" 
-              className="h-14 md:h-16 w-auto object-contain" 
+              className="h-16 w-auto object-contain" 
             />
           </Link>
 
@@ -70,9 +69,8 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12">
           
           <div>
-            {/* Logo in Footer with white background for visibility */}
-            <div className="mb-6 bg-white rounded-xl p-3 inline-block shadow-sm">
-               <img src="/logo.png" alt="Spexpo Lofts" className="h-10 md:h-12 w-auto" />
+            <div className="mb-6 bg-white rounded-xl p-3 inline-block">
+               <img src= "/logo.png" alt="Spexpo Lofts" className="h-12 w-auto" />
             </div>
             <p className="text-gray-400 mb-6 text-sm leading-relaxed">
               A melhor opção de hospedagem e moradia próxima ao São Paulo Expo. 

@@ -39,34 +39,22 @@ export const Home: React.FC = () => {
   return (
     <div className="bg-gray-50">
       {/* Hero Section */}
-      <section className="relative min-h-[750px] flex items-center overflow-hidden bg-neutral-900">
+      <section className="relative min-h-[750px] flex items-center overflow-hidden">
         
-        {/* Full Background Image */}
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="/fundo-hero.jpg" 
-            alt="Interior moderno" 
-            className="w-full h-full object-cover opacity-90"
-          />
-          {/* Subtle dark overlay for better text contrast if needed on edges */}
-          <div className="absolute inset-0 bg-black/30"></div>
-        </div>
-
-        {/* Red Curved Shape Overlay */}
-        <div className="absolute top-0 left-0 w-full md:w-[65%] h-full z-10 pointer-events-none text-brand-red">
-            <svg 
-                viewBox="0 0 100 100" 
-                preserveAspectRatio="none" 
-                className="w-full h-full fill-current"
-            >
-                {/* Curve logic: Starts top-left, goes right to 70%, curves out to 100% at middle, back to 70% at bottom */}
-                <path d="M0 0 L75 0 Q 100 50 75 100 L 0 100 Z" />
-            </svg>
+        {/* Background Image with Red Shape Overlay */}
+        <div className="absolute inset-0 z-0 bg-neutral-900">
+            <img src="/fundo-hero.jpg" alt="Interior moderno" className="w-full h-full object-cover" />
+            <div 
+                className="absolute top-0 left-0 w-full md:w-[65%] h-full bg-brand-red/90"
+                style={{ clipPath: 'polygon(0 0, 75% 0, 100% 50%, 75% 100%, 0 100%)' }}
+            ></div>
+            {/* Dark gradient for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-r from-neutral-900/70 via-neutral-900/50 to-transparent"></div>
         </div>
 
         <div className="container mx-auto px-4 z-20 relative pt-10">
           <div className="max-w-4xl text-white">
-            <span className="inline-block py-1 px-3 rounded-full bg-white/20 border border-white/30 text-white text-sm font-semibold mb-6 backdrop-blur-sm">
+            <span className="inline-block py-1 px-3 rounded-full bg-brand-red/20 border border-brand-red/30 text-red-200 text-sm font-semibold mb-6 backdrop-blur-sm">
               Temporada & Estadias Curtas
             </span>
             <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight drop-shadow-md">
