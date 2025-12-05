@@ -39,19 +39,18 @@ export const Home: React.FC = () => {
   return (
     <div className="bg-gray-50">
       {/* Hero Section */}
-      <section className="relative h-[650px] md:h-[750px] flex items-center justify-center">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="/fundo-hero.jpg" 
-            alt="Interior moderno" 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-neutral-900/95 via-neutral-900/60 to-transparent"></div>
-          {/* Decorative red curve */}
-          <div className="absolute top-0 left-0 w-1/2 h-full hidden md:block opacity-30 pointer-events-none">
-             <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="w-full h-full text-brand-red fill-current">
-                <path d="M0 0 L0 100 C 50 100 80 50 40 0 Z" />
-             </svg>
+      <section className="relative min-h-[650px] md:h-[750px] flex items-center bg-neutral-900 overflow-hidden">
+        
+        {/* Background Image - Occupying ~30% on the right */}
+        <div className="absolute top-0 right-0 w-full md:w-[45%] lg:w-[30%] h-full z-0">
+          <div className="relative h-full w-full">
+            <img 
+              src="/fundo-hero.jpg" 
+              alt="Interior moderno" 
+              className="w-full h-full object-cover opacity-50 md:opacity-100"
+            />
+            {/* Gradient for smooth transition to the dark background */}
+            <div className="absolute inset-0 bg-gradient-to-t from-neutral-900 via-neutral-900/40 to-transparent md:bg-gradient-to-l md:from-transparent md:via-neutral-900/20 md:to-neutral-900"></div>
           </div>
         </div>
 
@@ -64,7 +63,7 @@ export const Home: React.FC = () => {
               Conforto de Hotel, <br/>
               <span className="text-brand-red">Aconchego de Casa</span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-200 mb-10 max-w-2xl font-light">
+            <p className="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl font-light leading-relaxed">
               Apartamentos, Lofts e Studios completos e equipados. A melhor localização para quem vai ao São Paulo Expo.
             </p>
 
