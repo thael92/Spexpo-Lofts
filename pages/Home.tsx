@@ -43,7 +43,7 @@ export const Home: React.FC = () => {
         
         {/* Background Image with Red Shape Overlay */}
         <div className="absolute inset-0 z-0 bg-neutral-900">
-            <img src="/fundo-hero.jpg" alt="Interior moderno" className="w-full h-full object-cover" />
+            <img src="/fundo-hero.jpg" alt="Interior moderno" className="h-full object-cover w-[52%] relative left-[48%]" />
             <div 
                 className="absolute top-0 left-0 w-full md:w-[65%] h-full bg-brand-red/90"
                 style={{ clipPath: 'polygon(0 0, 75% 0, 100% 50%, 75% 100%, 0 100%)' }}
