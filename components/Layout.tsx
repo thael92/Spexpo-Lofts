@@ -12,14 +12,14 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       
       {/* Marketplace Header */}
       <header className={`sticky top-0 z-50 bg-white shadow-sm transition-all duration-300 border-b border-gray-200`}>
-        <div className="container mx-auto px-4 h-16 md:h-20 flex items-center justify-between">
+        <div className="container mx-auto px-4 h-20 md:h-24 flex items-center justify-between">
           
           {/* Logo Area */}
           <Link to="/" className="flex items-center gap-2">
              <img 
               src="/public/logo.png" 
               alt="Spexpo Lofts" 
-              className="h-10 md:h-12 w-auto object-contain" 
+              className="h-14 md:h-20 w-auto object-contain" 
             />
           </Link>
 
@@ -58,16 +58,29 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             </div>
           </div>
 
-          {/* Mobile Toggle */}
-          <button 
-            className="md:hidden text-gray-700 p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
+          {/* Mobile Actions (Favorites + Menu Toggle) */}
+          <div className="flex items-center gap-3 md:hidden">
+            {/* Mobile Favorites Icon */}
+            <Link to="/favoritos" className="p-2 relative text-gray-600 hover:text-brand-red">
+                <Heart size={24} fill={favorites.length > 0 ? "currentColor" : "none"} className={favorites.length > 0 ? "text-brand-red" : ""} />
+                {favorites.length > 0 && (
+                    <span className="absolute top-1 right-0 bg-brand-red text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full border border-white">
+                        {favorites.length}
+                    </span>
+                )}
+            </Link>
+
+            {/* Mobile Menu Toggle */}
+            <button 
+                className="text-gray-700 p-2"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+                {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
         </div>
 
-        {/* Mobile Nav */}
+        {/* Mobile Nav Drawer */}
         {isMenuOpen && (
           <div className="md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg h-screen z-50">
             <div className="flex flex-col p-6 space-y-6">
@@ -105,7 +118,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-gray-500">
           
           <div className="flex items-center gap-2 order-2 md:order-1">
-            <img src="/public/logo.png" alt="Logo" className="h-6 opacity-50 grayscale" />
+            <img src="/public/logo.png" alt="Logo" className="h-8 opacity-50 grayscale" />
             <span>&copy; 2024 Spexpo Lofts.</span>
           </div>
 
