@@ -52,14 +52,18 @@ export const Home: React.FC = () => {
   return (
     <div className="bg-[#F4F4F4] min-h-screen">
       
-      {/* Short Banner - Reference Style */}
-      <section className="relative h-[250px] flex flex-col justify-center items-center shadow-md">
+      {/* Short Banner - Video Background */}
+      <section className="relative h-[250px] flex flex-col justify-center items-center shadow-md overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img 
-            src="/public/fundo-hero.jpg" 
-            alt="Fundo" 
+          <video 
+            autoPlay 
+            loop 
+            muted 
+            playsInline
             className="w-full h-full object-cover brightness-[0.60]"
-          />
+          >
+            <source src="/public/video-fundo-hero.mp4" type="video/mp4" />
+          </video>
         </div>
         <div className="container mx-auto px-4 z-20 text-center">
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 drop-shadow-md">
