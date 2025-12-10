@@ -26,6 +26,7 @@ export interface Property {
   imagens: string[];
   destaque: boolean;
   caracteristicas: string[];
+  airbnbUrl?: string;
 }
 
 export interface FilterState {

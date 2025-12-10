@@ -1,45 +1,66 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, MapPin, Instagram, Facebook } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Menu, X, Heart, Home, Instagram, Facebook } from 'lucide-react';
+import { useFavorites } from '../contexts/FavoritesContext';
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation();
-
-  const isActive = (path: string) => location.pathname === path ? "text-brand-red font-bold" : "text-gray-600 hover:text-brand-red";
+  const { favorites } = useFavorites();
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      {/* Top Bar */}
-      <div className="bg-neutral-900 text-gray-300 text-xs py-2 px-4 hidden md:flex justify-end gap-6">
-        <span className="flex items-center gap-1"><Phone size={12} /> (11) 98128-0238</span>
-        <span className="flex items-center gap-1">contato@spexpolofts.com.br</span>
-      </div>
-
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
-        <div className="container mx-auto px-4 h-20 flex items-center justify-between">
-          <Link to="/" className="flex items-center">
-            <img 
-              src="/logo.png"
-              alt="SP Expo Lofts" 
-              className="h-16 w-auto object-contain" 
+    <div className="flex flex-col min-h-screen font-sans text-gray-700 bg-gray-50">
+      
+      {/* Marketplace Header */}
+      <header className={`sticky top-0 z-50 bg-white shadow-sm transition-all duration-300 border-b border-gray-200`}>
+        <div className="container mx-auto px-4 h-16 md:h-20 flex items-center justify-between">
+          
+          {/* Logo Area */}
+          <Link to="/" className="flex items-center gap-2">
+             <img 
+              src="/public/logo.png" 
+              alt="Spexpo Lofts" 
+              className="h-10 md:h-12 w-auto object-contain" 
             />
           </Link>
 
-          {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link to="/" className={isActive('/')}>Home</Link>
-            <Link to="/imoveis" className={isActive('/imoveis')}>Imóveis</Link>
-            <Link to="/sobre" className={isActive('/sobre')}>Sobre Nós</Link>
-            <Link to="/contato" className={`px-5 py-2.5 rounded-full font-medium transition-colors ${location.pathname === '/contato' ? 'bg-brand-red text-white' : 'bg-gray-100 text-gray-800 hover:bg-brand-red hover:text-white'}`}>
-              Contato
+          {/* Desktop Marketplace Nav */}
+          <div className="hidden md:flex items-center gap-6 text-sm text-gray-600">
+            
+            <Link to="/" className="flex items-center gap-1 hover:text-brand-red transition-colors font-medium">
+               <Home size={18} /> Início
             </Link>
-          </nav>
+
+            <Link to="/favoritos" className="flex items-center gap-1 hover:text-brand-red transition-colors font-medium">
+               <Heart size={18} fill={favorites.length > 0 ? "currentColor" : "none"} className={favorites.length > 0 ? "text-brand-red" : ""} /> 
+               Favoritos ({favorites.length})
+            </Link>
+
+            {/* Social Media Links */}
+            <div className="flex items-center gap-4 ml-2 border-l border-gray-200 pl-6 h-8">
+                <a 
+                  href="https://www.instagram.com/saopauloexpolofts/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hover:text-brand-red transition-colors"
+                  title="Instagram"
+                >
+                    <Instagram size={20} />
+                </a>
+                <a 
+                  href="https://www.facebook.com/profile.php?id=61560904164722" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hover:text-brand-red transition-colors"
+                  title="Facebook"
+                >
+                    <Facebook size={20} />
+                </a>
+            </div>
+          </div>
 
           {/* Mobile Toggle */}
           <button 
-            className="md:hidden text-gray-700"
+            className="md:hidden text-gray-700 p-2"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
             {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
@@ -48,12 +69,27 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
         {/* Mobile Nav */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg">
-            <div className="flex flex-col p-4 space-y-4">
-              <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-gray-800">Home</Link>
-              <Link to="/imoveis" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-gray-800">Imóveis</Link>
-              <Link to="/sobre" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-gray-800">Sobre Nós</Link>
-              <Link to="/contato" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-brand-red">Fale Conosco</Link>
+          <div className="md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg h-screen z-50">
+            <div className="flex flex-col p-6 space-y-6">
+              <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-gray-800 border-b pb-2 flex items-center gap-2">
+                <Home size={20} /> Início
+              </Link>
+              <Link to="/favoritos" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-gray-800 border-b pb-2 flex items-center gap-2">
+                <Heart size={20} fill={favorites.length > 0 ? "currentColor" : "none"} className={favorites.length > 0 ? "text-brand-red" : ""} />
+                Favoritos ({favorites.length})
+              </Link>
+
+              <div className="pt-4">
+                 <p className="text-xs font-bold text-gray-400 uppercase mb-4">Siga-nos</p>
+                 <div className="flex gap-6">
+                    <a href="https://www.instagram.com/saopauloexpolofts/" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-brand-red flex items-center gap-2">
+                        <Instagram size={24} /> <span className="font-medium">Instagram</span>
+                    </a>
+                    <a href="https://www.facebook.com/profile.php?id=61560904164722" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-brand-red flex items-center gap-2">
+                        <Facebook size={24} /> <span className="font-medium">Facebook</span>
+                    </a>
+                 </div>
+              </div>
             </div>
           </div>
         )}
@@ -64,55 +100,29 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         {children}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-neutral-900 text-white pt-16 pb-8">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-12">
+      {/* Simplified Footer */}
+      <footer className="bg-white border-t border-gray-200 py-8 mt-12">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-sm text-gray-500">
           
-          <div>
-            <div className="mb-6 bg-white rounded-xl p-3 inline-block">
-               <img src= "/logo.png" alt="Spexpo Lofts" className="h-12 w-auto" />
-            </div>
-            <p className="text-gray-400 mb-6 text-sm leading-relaxed">
-              A melhor opção de hospedagem e moradia próxima ao São Paulo Expo. 
-              Conforto, praticidade e qualidade para sua estadia ou novo lar.
-            </p>
-            <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 rounded-full bg-neutral-800 flex items-center justify-center hover:bg-brand-red transition-colors">
+          <div className="flex items-center gap-2 order-2 md:order-1">
+            <img src="/public/logo.png" alt="Logo" className="h-6 opacity-50 grayscale" />
+            <span>&copy; 2024 Spexpo Lofts.</span>
+          </div>
+
+          {/* Social Links Footer */}
+          <div className="flex gap-4 order-1 md:order-2">
+             <a href="https://www.instagram.com/saopauloexpolofts/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-red transition-colors p-2 bg-gray-50 rounded-full">
                 <Instagram size={20} />
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-neutral-800 flex items-center justify-center hover:bg-brand-red transition-colors">
+             </a>
+             <a href="https://www.facebook.com/profile.php?id=61560904164722" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-brand-red transition-colors p-2 bg-gray-50 rounded-full">
                 <Facebook size={20} />
-              </a>
-            </div>
+             </a>
           </div>
 
-          <div>
-            <h3 className="text-lg font-semibold mb-4 border-l-4 border-brand-red pl-3">Links Rápidos</h3>
-            <ul className="space-y-3 text-sm text-gray-400">
-              <li><Link to="/imoveis" className="hover:text-white transition-colors">Buscar Imóveis</Link></li>
-              <li><Link to="/sobre" className="hover:text-white transition-colors">Nossa História</Link></li>
-              <li><Link to="/contato" className="hover:text-white transition-colors">Fale Conosco</Link></li>
-              <li><Link to="/politica" className="hover:text-white transition-colors">Política de Privacidade</Link></li>
-            </ul>
+          <div className="flex gap-6 order-3">
+             <a href="#" className="hover:text-brand-red">Termos de Uso</a>
+             <a href="#" className="hover:text-brand-red">Política de Privacidade</a>
           </div>
-
-          <div>
-            <h3 className="text-lg font-semibold mb-4 border-l-4 border-brand-red pl-3">Contato</h3>
-            <ul className="space-y-4 text-sm text-gray-400">
-              <li className="flex items-start gap-3">
-                <MapPin className="text-brand-red shrink-0" size={18} />
-                <span>R. Exemplo, 123 - Jabaquara<br/>São Paulo - SP, 04321-000</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="text-brand-red shrink-0" size={18} />
-                <span>(11) 98128-0238</span>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-        <div className="container mx-auto px-4 mt-12 pt-8 border-t border-neutral-800 text-center text-xs text-gray-500">
-          <p>&copy; 2024 Spexpo Lofts. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>

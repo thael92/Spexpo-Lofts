@@ -33,7 +33,8 @@ const FEATURED_PROPERTIES: Property[] = [
         "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2000&auto=format&fit=crop"
     ],
     destaque: true,
-    caracteristicas: ["Mercadinho no Térreo", "Lavanderia OMO", "Academia", "Wi-Fi Dedicado", "Portaria Eletrônica", "500m do Expo"]
+    caracteristicas: ["Mercadinho no Térreo", "Lavanderia OMO", "Academia", "Wi-Fi Dedicado", "Portaria Eletrônica", "500m do Expo"],
+    airbnbUrl: "http://airbnb.com/h/imigrantes1"
   },
   {
     id: "sp-002",
@@ -57,7 +58,8 @@ const FEATURED_PROPERTIES: Property[] = [
     descricao: "Praticidade e elegância. Studio compacto perfeito para quem precisa estar perto do aeroporto de Congonhas e do centro de eventos.",
     imagens: [getMockImage(201), getMockImage(202)],
     destaque: true,
-    caracteristicas: ["Wi-Fi", "Coworking", "Lavanderia"]
+    caracteristicas: ["Wi-Fi", "Coworking", "Lavanderia"],
+    airbnbUrl: "http://airbnb.com/h/imigrantes2"
   },
   {
     id: "sp-003",
@@ -81,43 +83,47 @@ const FEATURED_PROPERTIES: Property[] = [
     descricao: "Apartamento espaçoso em andar alto. Vista livre, varanda gourmet e lazer completo no condomínio.",
     imagens: [getMockImage(301), getMockImage(302), getMockImage(303)],
     destaque: false,
-    caracteristicas: ["Piscina", "Varanda Gourmet", "Pet Friendly"]
+    caracteristicas: ["Piscina", "Varanda Gourmet", "Pet Friendly"],
+    airbnbUrl: "http://airbnb.com/h/imigrantes3"
   }
 ];
 
-// Generator to create ~80 properties
+// Generator to create exactly 80 properties to match the airbnb link requirement
 const generateProperties = (): Property[] => {
   const properties = [...FEATURED_PROPERTIES];
   const types = ["Loft", "Studio", "Apartamento", "Casa"] as const;
   const bairros = ["Jabaquara", "Vila Guarani", "Saúde", "Vila Mariana", "Moema"];
   
+  // Start from 4 up to 80
   for (let i = 4; i <= 80; i++) {
     const type = types[Math.floor(Math.random() * types.length)];
     const bairro = bairros[Math.floor(Math.random() * bairros.length)];
+    const bedrooms = type === 'Casa' || type === 'Apartamento' ? Math.floor(Math.random() * 3) + 1 : 1;
     
     properties.push({
       id: `sp-${String(i).padStart(3, '0')}`,
       slug: `imovel-${type.toLowerCase()}-${i}`,
-      titulo: `${type} Comfort - ${bairro}`,
+      titulo: `${type} Standard - ${bairro} (Unid. ${i})`,
       preco: 120 + Math.floor(Math.random() * 300), // Daily rates between 120 and 420
       tipo: type,
       status: "aluguel",
-      area_m2: 25 + Math.floor(Math.random() * 100),
-      quartos: 1 + Math.floor(Math.random() * 3),
+      area_m2: 25 + Math.floor(Math.random() * 80),
+      quartos: bedrooms,
       banheiros: 1 + Math.floor(Math.random() * 2),
       vagas: Math.floor(Math.random() * 2),
       condominio: 0,
       endereco: {
-        rua: `Rua Exemplo, ${i * 10}`,
+        rua: `Rua das Flores, ${i * 10}`,
         bairro: bairro,
         cidade: "São Paulo",
         uf: "SP",
         cep: "04000-000"
       },
-      descricao: "Excelente oportunidade para sua estadia. Imóvel bem localizado, com fácil acesso a transporte público e comércios.",
+      descricao: `Excelente opção de ${type} para temporada em ${bairro}. Totalmente mobiliado, com internet de alta velocidade e próximo ao metrô. Ideal para eventos no Expo.`,
       imagens: [getMockImage(i * 10), getMockImage(i * 10 + 1)],
       destaque: Math.random() > 0.9,
-      caracteristicas: ["Segurança 24h", "Elevador", "Wi-Fi"]
+      caracteristicas: ["Segurança 24h", "Elevador", "Wi-Fi", "Ar Condicionado"],
+      airbnbUrl: `http://airbnb.com/h/imigrantes${i}`
     });
   }
   return properties;

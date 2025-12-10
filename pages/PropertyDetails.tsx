@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { fetchPropertyById } from '../services/propertyService';
 import { Property } from '../types';
-import { MapPin, BedDouble, Bath, Car, Square, ChevronLeft, ChevronRight, CheckCircle2, Map as MapIcon, Calendar, ArrowRight, Info } from 'lucide-react';
+import { MapPin, BedDouble, Bath, Car, Square, ChevronLeft, ChevronRight, CheckCircle2, Map as MapIcon, Calendar, ArrowRight, Info, Users, Minus, Plus } from 'lucide-react';
 import { LocationModal } from '../components/LocationModal';
 import { AvailabilityCalendar } from '../components/AvailabilityCalendar';
 
@@ -17,6 +17,13 @@ export const PropertyDetails: React.FC = () => {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [nights, setNights] = useState(0);
+  
+  // Detailed Guest State
+  const [adults, setAdults] = useState(1);
+  const [childrenCount, setChildrenCount] = useState(0);
+  const [infants, setInfants] = useState(0);
+  
+  const maxGuests = 4; // Limit for Adults + Children
 
   useEffect(() => {
     if (id) {
@@ -44,6 +51,42 @@ export const PropertyDetails: React.FC = () => {
       setCheckOut(end);
   };
 
+  const getReservationUrl = () => {
+    if (!property) return "#";
+    const baseUrl = property.airbnbUrl || "https://www.airbnb.com.br/rooms/1309713318273367376";
+    
+    let url = baseUrl;
+    const params: string[] = [];
+
+    if (checkIn && checkOut) {
+        try {
+            const startDate = new Date(checkIn);
+            const endDate = new Date(checkOut);
+            
+            // Format dates as YYYY-MM-DD for Airbnb URL parameters
+            const startStr = startDate.toISOString().split('T')[0];
+            const endStr = endDate.toISOString().split('T')[0];
+            
+            params.push(`check_in=${startStr}`);
+            params.push(`check_out=${endStr}`);
+        } catch (e) {
+            console.error("Error formatting dates for URL", e);
+        }
+    }
+
+    // Add detailed guest parameters
+    params.push(`adults=${adults}`);
+    if (childrenCount > 0) params.push(`children=${childrenCount}`);
+    if (infants > 0) params.push(`infants=${infants}`);
+
+    if (params.length > 0) {
+        const separator = url.includes('?') ? '&' : '?';
+        url = `${url}${separator}${params.join('&')}`;
+    }
+
+    return url;
+  };
+
   if (loading) return <div className="h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-red"></div></div>;
   
   if (!property) return <div className="h-screen flex flex-col items-center justify-center">
@@ -54,6 +97,57 @@ export const PropertyDetails: React.FC = () => {
   const formatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
   const fullAddress = `${property.endereco.rua}, ${property.endereco.bairro} - ${property.endereco.cidade}`;
   const totalValue = nights * property.preco;
+
+  // Render a guest row
+  const GuestRow = ({ 
+    label, 
+    subLabel, 
+    value, 
+    onPlus, 
+    onMinus, 
+    canPlus, 
+    canMinus 
+  }: { 
+    label: string, 
+    subLabel: string, 
+    value: number, 
+    onPlus: () => void, 
+    onMinus: () => void, 
+    canPlus: boolean, 
+    canMinus: boolean 
+  }) => (
+    <div className="flex justify-between items-center py-3 border-b border-gray-100 last:border-0">
+        <div>
+            <div className="font-bold text-gray-800 text-sm">{label}</div>
+            <div className="text-xs text-gray-500">{subLabel}</div>
+        </div>
+        <div className="flex items-center gap-3">
+            <button 
+                onClick={onMinus}
+                disabled={!canMinus}
+                className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
+                    !canMinus 
+                    ? 'border-gray-200 text-gray-300 cursor-not-allowed' 
+                    : 'border-brand-red text-brand-red hover:bg-brand-red hover:text-white'
+                }`}
+            >
+                <Minus size={14} />
+            </button>
+            <span className="w-4 text-center text-sm font-bold text-gray-900">{value}</span>
+            <button 
+                onClick={onPlus}
+                disabled={!canPlus}
+                className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all ${
+                    !canPlus 
+                    ? 'border-gray-200 text-gray-300 cursor-not-allowed' 
+                    : 'border-brand-red text-brand-red hover:bg-brand-red hover:text-white'
+                }`}
+            >
+                <Plus size={14} />
+            </button>
+        </div>
+    </div>
+  );
 
   return (
     <div className="bg-gray-50 min-h-screen pb-12">
@@ -220,9 +314,9 @@ export const PropertyDetails: React.FC = () => {
 
                 {/* Date Calculator with New Calendar */}
                 <div className="space-y-4 mb-6">
-                    <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 flex gap-2 items-start">
-                        <Info className="text-blue-500 shrink-0 mt-0.5" size={16} />
-                        <p className="text-xs text-blue-700">
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex gap-2 items-start">
+                        <Info className="text-gray-500 shrink-0 mt-0.5" size={16} />
+                        <p className="text-xs text-gray-600">
                             Simulação de disponibilidade ativa. Datas riscadas estão ocupadas (exemplo iCal).
                         </p>
                     </div>
@@ -242,6 +336,43 @@ export const PropertyDetails: React.FC = () => {
                                 {checkOut ? new Date(checkOut).toLocaleDateString('pt-BR') : '-'}
                             </span>
                         </div>
+                    </div>
+
+                    {/* Guests Selection */}
+                    <div className="bg-white p-4 rounded-xl border border-gray-200 mt-4 shadow-sm">
+                        <h4 className="text-xs font-bold text-gray-500 uppercase mb-3 flex items-center gap-1">
+                             <Users size={14} /> Hóspedes (Máx {maxGuests})
+                        </h4>
+                        
+                        <GuestRow 
+                            label="Adultos" 
+                            subLabel="Com 13 anos ou mais"
+                            value={adults}
+                            onMinus={() => setAdults(Math.max(1, adults - 1))}
+                            onPlus={() => setAdults(adults + 1)}
+                            canMinus={adults > 1}
+                            canPlus={adults + childrenCount < maxGuests}
+                        />
+
+                        <GuestRow 
+                            label="Crianças" 
+                            subLabel="De 2 a 12 anos"
+                            value={childrenCount}
+                            onMinus={() => setChildrenCount(Math.max(0, childrenCount - 1))}
+                            onPlus={() => setChildrenCount(childrenCount + 1)}
+                            canMinus={childrenCount > 0}
+                            canPlus={adults + childrenCount < maxGuests}
+                        />
+
+                        <GuestRow 
+                            label="Bebês" 
+                            subLabel="Menor de 2"
+                            value={infants}
+                            onMinus={() => setInfants(Math.max(0, infants - 1))}
+                            onPlus={() => setInfants(infants + 1)}
+                            canMinus={infants > 0}
+                            canPlus={true} // Infants typically don't count towards the 4 person max in this logic
+                        />
                     </div>
 
                     {/* Total Calculation */}
@@ -265,16 +396,17 @@ export const PropertyDetails: React.FC = () => {
 
                 {/* Booking Button */}
                 <a
-                    href="https://www.airbnb.com.br/rooms/1309713318273367376"
+                    href={getReservationUrl()}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`w-full bg-[#FF385C] hover:bg-[#D93250] text-white font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-1 flex items-center justify-center gap-2 group uppercase tracking-wide ${nights === 0 ? 'opacity-75' : ''}`}
+                    className={`w-full bg-[#FF385C] hover:bg-[#D93250] text-white font-bold py-4 rounded-xl transition-all shadow-md hover:shadow-lg hover:-translate-y-1 flex items-center justify-center gap-2 group uppercase tracking-wide ${nights === 0 ? 'opacity-90' : ''}`}
                 >
                     RESERVAR <ArrowRight size={20} />
                 </a>
 
-                <p className="text-center text-xs text-gray-400 mt-4">
-                    Você será redirecionado para o Airbnb para concluir a reserva com segurança.
+                <p className="text-center text-xs text-gray-400 mt-4 leading-relaxed">
+                    Você será redirecionado para o Airbnb (Unidade {property.id.replace('sp-', '')}) 
+                    {nights > 0 ? ' com datas e hóspedes pré-selecionados' : ' para concluir a reserva'}.
                 </p>
              </div>
           </div>
