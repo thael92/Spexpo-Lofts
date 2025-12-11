@@ -63,11 +63,11 @@ export const Home: React.FC = () => {
         </div>
 
         {/* Logo no canto esquerdo */}
-        <div className="absolute top-8 left-8 z-30 flex items-center justify-center h-80 w-80 bg-white rounded-full p-2">
+        <div className="absolute top-18 left-4 z-30 flex items-center justify-center h-28 w-28 md:top-1 md:left-20 md:h-80 md:w-80 bg-white rounded-full p-2">
           <img 
             src="/public/logo.png" 
             alt="Logo"
-            className="absolute top-8 h-36 w-36 filter brightness(0) invert(1)" // Deixa a imagem branca em 4rem
+            className="h-16 w-16 md:h-36 md:w-36 filter brightness(0) invert(1)" // Deixa a imagem branca
           />
         </div>
 
