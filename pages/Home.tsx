@@ -55,7 +55,7 @@ export const Home: React.FC = () => {
       {/* Short Banner - Reference Style */}
       <section className="relative h-[250px] flex flex-col justify-center items-center shadow-md">
         <div className="absolute inset-0 z-0">
-          <Video 
+          <img 
             src="/public/fundo-hero.jpg" 
             alt="Fundo" 
             className="w-full h-full object-cover brightness-[0.60]"
