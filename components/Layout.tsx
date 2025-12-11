@@ -14,13 +14,13 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       <header className={`sticky top-0 z-50 bg-white shadow-sm transition-all duration-300 border-b border-gray-200`}>
         <div className="container mx-auto px-4 h-20 md:h-24 flex items-center justify-between">
           
-          {/* Logo Area */}
+        {/* Logo Area */}
           <Link to="/" className="flex items-center gap-2">
-             <img 
+             {/*<img 
               src="/public/logo.png" 
               alt="Spexpo Lofts" 
               className="h-14 md:h-20 w-auto object-contain" 
-            />
+            />*/}
           </Link>
 
           {/* Desktop Marketplace Nav */}

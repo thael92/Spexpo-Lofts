@@ -55,26 +55,27 @@ export const Home: React.FC = () => {
       {/* Short Banner - Video Background */}
       <section className="relative h-[250px] flex flex-col justify-center items-center shadow-md overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <video 
-            autoPlay 
-            loop 
-            muted 
-            playsInline
+          <img 
+            src="/public/fundo-hero.jpg" 
+            alt="Fundo" 
             className="w-full h-full object-cover brightness-[0.60]"
-          >
-            <source src="/public/video-fundo-hero.mp4" type="video/mp4" />
-          </video>
+          />
+        </div>
+
+        {/* Logo no canto esquerdo */}
+        <div className="absolute top-8 left-8 z-30 flex items-center justify-center h-80 w-80 bg-white rounded-full p-2">
+          <img 
+            src="/public/logo.png" 
+            alt="Logo"
+            className="absolute top-8 h-36 w-36 filter brightness(0) invert(1)" // Deixa a imagem branca em 4rem
+          />
         </div>
 
         <div className="absolute inset-y-0 left-0 w-[80%] flex items-center">
           <div
             className="absolute inset-0 bg-gradient-to-r from-red-600 to-transparent z-10"
           ></div>
-          <div className="relative z-20 px-6 py-8 text-center mx-auto">
-            <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 drop-shadow-md">
-              Casas e Apartamentos <br /> para Aluguel de Temporada
-            </h1>            
-          </div>
+          
         </div>
       </section>
 
