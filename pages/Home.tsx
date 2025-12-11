@@ -63,10 +63,10 @@ export const Home: React.FC = () => {
         </div>
         <div className="container mx-auto px-4 z-20 text-center">
           <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 drop-shadow-md">
-            Casas e Apartamentos para Aluguel de Temporada
+            Casas e Apartamentos para <span className="text-red-600">Aluguel de Temporada</span>
           </h1>
           <p className="text-lg text-white/90 drop-shadow-sm font-medium">
-            Mais de 80 imóveis disponíveis próximos ao São Paulo Expo e Metrô Jabaquara
+            Mais de <span className="text-red-600">80 imóveis</span> para temporada, perto do São Paulo Expo e Metrô Jabaquara.
           </p>
         </div>
       </section>
