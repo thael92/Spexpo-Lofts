@@ -65,10 +65,16 @@ export const Home: React.FC = () => {
             <source src="/public/video-fundo-hero.mp4" type="video/mp4" />
           </video>
         </div>
-        <div className="container mx-auto px-4 z-20 text-center">
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 drop-shadow-md">
-            Casas e Apartamentos para <span className="text-red-600">Aluguel de Temporada</span>
-          </h1>          
+
+        <div className="absolute inset-y-0 left-0 w-[80%] flex items-center">
+          <div
+            className="absolute inset-0 bg-gradient-to-r from-red-600 to-transparent z-10"
+          ></div>
+          <div className="relative z-20 px-6 py-8 text-center mx-auto">
+            <h1 className="text-3xl md:text-5xl font-bold text-white mb-2 drop-shadow-md">
+              Casas e Apartamentos <br /> para Aluguel de Temporada
+            </h1>            
+          </div>
         </div>
       </section>
 
