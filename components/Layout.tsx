@@ -1,26 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, Heart, Home, Instagram, Facebook } from 'lucide-react';
 import { useFavorites } from '../contexts/FavoritesContext';
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false); // Novo estado para rolagem
   const { favorites } = useFavorites();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 50) { // Ajuste 50px conforme necessário para o ponto de rolagem
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col min-h-screen font-sans text-gray-700 bg-gray-50">
       
       {/* Marketplace Header */}
-      <header className={`sticky top-0 z-50 bg-white shadow-sm transition-all duration-300 border-b border-gray-200`}>
+      <header className={`sticky top-0 z-50 shadow-sm transition-all duration-300 ${scrolled ? 'bg-white' : 'bg-[#FDF8E4]'}`}>
         <div className="container mx-auto px-4 h-20 md:h-24 flex items-center justify-between">
           
-        {/* Logo Area */}
+        {/* Logo Area - Visível apenas ao rolar */}
           <Link to="/" className="flex items-center gap-2">
-             {/*<img 
-              src="/public/logo.png" 
-              alt="Spexpo Lofts" 
-              className="h-14 md:h-20 w-auto object-contain" 
-            />*/}
+             {scrolled && (
+              <img 
+                src="/public/logo.png" 
+                alt="Spexpo Lofts" 
+                className="h-[80px] w-auto object-contain md:h-[100px]" // Logo em sua cor original quando rolada
+              />
+             )}
           </Link>
 
           {/* Desktop Marketplace Nav */}
@@ -82,7 +100,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
         {/* Mobile Nav Drawer */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg h-screen z-50">
+          <div className={`md:hidden border-t border-gray-100 absolute w-full shadow-lg h-screen z-50 ${scrolled ? 'bg-white' : 'bg-[#FDF8E4]'}`}>
             <div className="flex flex-col p-6 space-y-6">
               <Link to="/" onClick={() => setIsMenuOpen(false)} className="text-lg font-medium text-gray-800 border-b pb-2 flex items-center gap-2">
                 <Home size={20} /> Início

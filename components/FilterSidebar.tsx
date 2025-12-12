@@ -32,7 +32,7 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, isOpen, o
        
        <div 
           className={`
-           bg-white lg:rounded-lg shadow-sm lg:border border-gray-200 overflow-y-auto lg:overflow-visible
+           lg:rounded-lg shadow-sm lg:border border-gray-200 overflow-y-auto lg:overflow-visible
            w-[85%] lg:w-full h-full lg:h-auto max-w-sm lg:max-w-none
            ${isOpen ? 'animate-in slide-in-from-right duration-300' : ''}
           `}

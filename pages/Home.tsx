@@ -53,30 +53,35 @@ export const Home: React.FC = () => {
     <div className="bg-[#F4F4F4] min-h-screen">
       
       {/* Short Banner - Video Background */}
-      <section className="relative h-[250px] flex flex-col justify-center items-center shadow-md overflow-hidden">
+      <section className="relative h-[600px] flex flex-col justify-center items-center shadow-md overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img 
-            src="/public/fundo-hero.jpg" 
+            src="/public/fundo-hero.jpeg" 
             alt="Fundo" 
-            className="w-full h-full object-cover brightness-[0.60]"
+            className="absolute top-[180px] w-full h-full object-cover brightness-[0.60] md:[100px]"
+            style={{ maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%)', WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%)' }}
           />
+          {/* Overlay bege com gradiente */}
+          <div className="absolute inset-0 z-[1]" style={{ background: 'linear-gradient(to bottom, #FDF8E4 0%, #FDF8E4 10%, transparent 40%)' }}></div>
         </div>
 
-        {/* Logo no canto esquerdo */}
-        <div className="absolute top-18 left-4 z-30 flex items-center justify-center h-28 w-28 md:top-1 md:left-20 md:h-80 md:w-80 bg-white rounded-full p-2">
-          <img 
-            src="/public/logo.png" 
-            alt="Logo"
-            className="h-16 w-16 md:h-36 md:w-36 filter brightness(0) invert(1)" // Deixa a imagem branca
-          />
+        {/* Texto abaixo da imagem */}
+        <div className="relative bottom-[80px] z-30 text-center">
+          <p className="text-black text-3xl md:text-4xl leading-snug">
+            Dê valor ao seu tempo,
+            <br />
+            nós cuidamos do resto!
+          </p>
         </div>
 
-        <div className="absolute inset-y-0 left-0 w-[80%] flex items-center">
-          <div
-            className="absolute inset-0 bg-gradient-to-r from-red-600 to-transparent z-10"
-          ></div>
-          
-        </div>
+        {/* Logo centralizada */}
+        <img 
+          src="/public/logo.png" 
+          alt="Logo"
+          className="absolute bottom-[440px] h-[170px] w-auto z-30 filter brightness(0) invert(1) md:h-[170px]" // Logo branca e centralizada, responsiva
+        />
+
+        
       </section>
 
       {/* Main Content Area */}
