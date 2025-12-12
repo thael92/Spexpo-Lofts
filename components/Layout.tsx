@@ -31,7 +31,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         <div className="container mx-auto px-4 h-20 md:h-24 flex items-center justify-between">
           
         {/* Logo Area - Visível apenas ao rolar */}
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/home.tsx" className="flex items-center gap-2">
              {scrolled && (
               <img 
                 src="/public/logo.png" 
