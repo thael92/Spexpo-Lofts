@@ -314,14 +314,10 @@ export const PropertyDetails: React.FC = () => {
 
                 {/* Date Calculator with New Calendar */}
                 <div className="space-y-4 mb-6">
-                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex gap-2 items-start">
-                        <Info className="text-gray-500 shrink-0 mt-0.5" size={16} />
-                        <p className="text-xs text-gray-600">
-                            Simulação de disponibilidade ativa. Datas riscadas estão ocupadas (exemplo iCal).
-                        </p>
-                    </div>
-
-                    <AvailabilityCalendar onRangeChange={handleRangeChange} />
+                    <AvailabilityCalendar
+                      icalUrl={property.icalUrl}
+                      onRangeChange={handleRangeChange}
+                    />
 
                     <div className="grid grid-cols-2 gap-3 mt-4">
                         <div className="bg-gray-50 p-3 rounded-lg border border-gray-100">

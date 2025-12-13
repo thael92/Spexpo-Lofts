@@ -27,6 +27,7 @@ export interface Property {
   destaque: boolean;
   caracteristicas: string[];
   airbnbUrl?: string;
+  icalUrl?: string;
 }
 
 export interface FilterState {
@@ -35,4 +36,6 @@ export interface FilterState {
   maxPrice: number;
   type: string;
   bedrooms: number | string;
+  startDate?: string;
+  endDate?: string;
 }

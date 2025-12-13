@@ -63,11 +63,15 @@ export const FilterSidebar: React.FC<FilterSidebarProps> = ({ filters, isOpen, o
                            type="date" 
                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-600 focus:border-[#D32F2F] focus:ring-1 focus:ring-[#D32F2F] outline-none transition-colors" 
                            placeholder="Entrada"
+                           value={filters.startDate || ''}
+                           onChange={(e) => onFilterChange('startDate', e.target.value)}
                        />
                        <input 
                            type="date" 
                            className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-600 focus:border-[#D32F2F] focus:ring-1 focus:ring-[#D32F2F] outline-none transition-colors" 
                            placeholder="Saída"
+                           value={filters.endDate || ''}
+                           onChange={(e) => onFilterChange('endDate', e.target.value)}
                        />
                    </div>
                </div>

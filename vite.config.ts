@@ -28,5 +28,8 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist',
       emptyOutDir: true,
     },
+    optimizeDeps: {
+      include: ['ical.js'],
+    }
   }
 })
