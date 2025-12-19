@@ -9,21 +9,21 @@ import { useLanguage } from '../contexts/LanguageContext';
 const HERO_ITEMS = [
   {
     type: 'video',
-    url: 'https://player.vimeo.com/external/370331493.hd.mp4?s=33d596660df8903c73499cf29994c6f370f1a94e&profile_id=175', 
-    poster: 'https://images.unsplash.com/photo-1493809842364-78817add7ffb?q=80&w=2070&auto=format&fit=crop'
-  },
-  {
-    type: 'image',
-    url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2000&auto=format&fit=crop',
+    url: 'public/videos/video-fundo-01.mp4', 
+    poster: 'public/videos/video-fundo-01.mp4'
   },
   {
     type: 'video',
-    url: 'https://player.vimeo.com/external/434045526.sd.mp4?s=c27dbed94f100366663f73c6a46f2c75a4d0f772&profile_id=164', 
-    poster: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=2000&auto=format&fit=crop'
+    url: 'public/videos/video-fundo-02.mp4',
   },
   {
-    type: 'image',
-    url: 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?q=80&w=2000&auto=format&fit=crop',
+    type: 'video',
+    url: 'public/videos/video-fundo-03.mp4', 
+    poster: 'public/videos/video-fundo-03.mp4'
+  },
+  {
+    type: 'video',
+    url: 'public/videos/video-fundo-04.mp4',
   }
 ];
 
@@ -242,7 +242,7 @@ export const Home: React.FC = () => {
             <div className="relative group">
                <div className="aspect-[4/5] rounded-[3rem] overflow-hidden shadow-2xl">
                   <img 
-                    src="https://images.unsplash.com/photo-1574362848149-11496d93a7c7?q=80&w=2000&auto=format&fit=crop" 
+                    src="public/fundo-hero.jpg" 
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                     alt="Interior Loft"
                   />

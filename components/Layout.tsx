@@ -5,15 +5,10 @@ import { useFavorites } from '../contexts/FavoritesContext';
 import { useLanguage } from '../contexts/LanguageContext';
 import { Language } from '../types';
 
-const Logo = ({ className = "h-12" }: { className?: string }) => (
-  <svg viewBox="0 0 400 110" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="45" y="45" width="25" height="45" fill="currentColor" />
-    <rect x="75" y="25" width="25" height="65" fill="currentColor" />
-    <rect x="105" y="55" width="25" height="35" fill="currentColor" />
-    <path d="M40 90H135" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
-    <text x="150" y="65" fontFamily="Inter" fontWeight="900" fontSize="38" letterSpacing="-1" fill="currentColor">SPEXPO</text>
-    <text x="150" y="90" fontFamily="Inter" fontWeight="400" fontSize="18" letterSpacing="6" fill="#D32F2F">LOFTS</text>
-  </svg>
+const Logo = ({ className = "", isCompact }: { className?: string, isCompact?: boolean }) => (
+  <div className={`transition-all duration-500 w-fit ${!isCompact ? 'bg-white border-2 border-gray-200 rounded-lg p-2' : ''} ${className}`}>
+    <img src="/logo.png" alt="SPEXPO Lofts Logo" className="h-full w-auto" />
+  </div>
 );
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -90,7 +85,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           <div className="hidden md:flex flex-col items-center transition-all duration-500">
             <Link to="/" className={`transition-all duration-500 transform ${isCompact ? 'scale-75 mb-2' : 'scale-110 mb-6'}`}>
                <div className={`${isCompact ? 'text-neutral-900' : 'text-white'}`}>
-                  <Logo className="h-14" />
+                  <Logo isCompact={isCompact} className={isCompact ? "h-[100px]" : "h-[130px]"} />
                </div>
             </Link>
 
@@ -131,7 +126,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
           {/* Layout MOBILE: Logo Central e Hambúrguer na Direita */}
           <div className="md:hidden flex justify-between items-center w-full">
-            <div className="w-10">
+            <div className="w-[40px]">
                {favorites.length > 0 && (
                   <Link to="/favoritos" className={`relative ${isCompact ? 'text-brand-red' : 'text-white'}`}>
                     <Heart size={20} fill="currentColor" />
@@ -141,7 +136,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             
             <Link to="/" className={`transition-all duration-500 transform ${isCompact ? 'scale-75' : 'scale-90'}`}>
                <div className={`${isCompact ? 'text-neutral-900' : 'text-white'}`}>
-                  <Logo className="h-10" />
+                  <Logo isCompact={isCompact} className="h-[130px]" />
                </div>
             </Link>
 
@@ -159,7 +154,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           <div className="fixed inset-0 bg-white z-[110] md:hidden animate-in fade-in slide-in-from-right duration-300">
             <div className="flex flex-col h-full overflow-y-auto">
                 <div className="p-8 flex justify-between items-center border-b border-gray-100">
-                    <Logo className="h-10 text-neutral-900" />
+                    <Logo className="h-[70px] text-neutral-900" />
                     <button onClick={() => setIsMenuOpen(false)} className="p-2 bg-gray-100 rounded-full">
                         <X size={24} />
                     </button>
@@ -238,7 +233,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             
             <div className="space-y-8">
                 <Link to="/" className="text-white block">
-                    <Logo className="h-14" />
+                    <Logo isCompact={false} className="h-[90px]" />
                 </Link>
                 <p className="text-gray-400 text-sm font-light leading-relaxed">
                     {t('footer.desc')}
