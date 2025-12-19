@@ -14,7 +14,7 @@ export const Favorites: React.FC = () => {
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                 <Heart className="text-brand-red fill-current" /> Meus Favoritos
             </h1>
-            <p className="text-gray-500 mt-2">Gerencie os imóveis que você mais gostou.</p>
+            <p className="text-gray-500 mt-2">Gerencie as hospedagens que você mais gostou.</p>
         </div>
       </div>
 
@@ -26,10 +26,10 @@ export const Favorites: React.FC = () => {
                 </div>
                 <h2 className="text-2xl font-bold text-gray-800 mb-3">Você ainda não tem favoritos</h2>
                 <p className="text-gray-500 mb-8 max-w-md mx-auto">
-                    Navegue pelos nossos imóveis e clique no coração para salvar aqueles que você mais gostar.
+                    Navegue pelas nossas hospedagens e clique no coração para salvar aquelas que você mais gostar.
                 </p>
                 <Link to="/imoveis" className="inline-flex items-center gap-2 px-8 py-3 bg-brand-red text-white font-bold rounded-full hover:bg-red-800 transition-colors shadow-lg">
-                    <ArrowLeft size={18} /> Explorar Imóveis
+                    <ArrowLeft size={18} /> Explorar Hospedagens
                 </Link>
             </div>
         ) : (

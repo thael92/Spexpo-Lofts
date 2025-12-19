@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { fetchICalEvents, CalendarEvent } from '../services/icalService';
 import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { Calendar } from 'lucide-react';
 
 interface AvailabilityCalendarProps {
@@ -22,6 +21,7 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({ ical
         const blockedDates = fetchedEvents.flatMap(event => {
           const dates: Date[] = [];
           let currentDate = new Date(event.startDate);
+          // Simple block logic: include every day between start and end
           while (currentDate <= event.endDate) {
             dates.push(new Date(currentDate));
             currentDate.setDate(currentDate.getDate() + 1);
@@ -40,11 +40,6 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({ ical
       onRangeChange('', '');
     }
   }, [startDate, endDate, onRangeChange]);
-
-  const isWeekday = (date: Date) => {
-    const day = date.getDay();
-    return day !== 0 && day !== 6; // Exclui sábados e domingos para exemplo
-  };
 
   const filterPassedDays = (date: Date) => {
     const today = new Date();
@@ -66,17 +61,17 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({ ical
         }}
         startDate={startDate}
         endDate={endDate}
-        excludeDates={excludedDates} // Datas do iCal bloqueadas
-        filterDate={filterPassedDays} // Não permite datas passadas
+        excludeDates={excludedDates} 
+        filterDate={filterPassedDays} 
         selectsRange
         inline
-        monthsShown={2} // Mostra dois meses
+        monthsShown={1}
         className="w-full"
         dayClassName={() => "rounded-full hover:bg-red-100 text-sm"}
         popperPlacement="bottom-start"
         calendarClassName="border-0 shadow-none"
         dateFormat="dd/MM/yyyy"
-        formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)} // Apenas a primeira letra do dia da semana
+        formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
       />
     </div>
   );

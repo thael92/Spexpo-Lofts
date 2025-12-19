@@ -1,129 +1,54 @@
 import { Property } from '../types';
 
-// Helper to generate mock images
-const getMockImage = (id: number, width = 800, height = 600) => 
-  `https://picsum.photos/seed/${id}/${width}/${height}`;
-
-// Base mock data with daily rates
-const FEATURED_PROPERTIES: Property[] = [
-  {
-    id: "sp-001",
-    slug: "loft-unidade-imigrantes",
-    titulo: "Loft Unidade Imigrantes - Expo",
-    preco: 220, // Daily rate
-    tipo: "Loft",
-    status: "aluguel",
-    area_m2: 38,
-    quartos: 1,
-    banheiros: 1,
-    vagas: 0,
-    condominio: 0,
-    iptu: 0,
-    endereco: {
-      rua: "Rua Maringá, 106",
-      bairro: "Vila Guarani",
-      cidade: "São Paulo",
-      uf: "SP",
-      cep: "04311-000"
-    },
-    descricao: "Unidade Imigrantes: Localização estratégica próximo ao São Paulo Expo (500m). O prédio conta com comodidades exclusivas como Mercadinho SmartStore no térreo, Lavanderia OMO compartilhada e Academia funcional. Ideal para investidores de Airbnb ou moradia prática. Acesso fácil ao Metrô Jabaquara.",
-    imagens: [
-        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2000&auto=format&fit=crop", 
-        "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=2000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?q=80&w=2000&auto=format&fit=crop"
-    ],
-    destaque: true,
-    caracteristicas: ["Mercadinho no Térreo", "Lavanderia OMO", "Academia", "Wi-Fi Dedicado", "Portaria Eletrônica", "500m do Expo"],
-    airbnbUrl: "http://airbnb.com/h/imigrantes1"
-  },
-  {
-    id: "sp-002",
-    slug: "studio-executive-guarani",
-    titulo: "Studio Executive Guarani",
-    preco: 180, // Daily rate
-    tipo: "Studio",
-    status: "aluguel",
-    area_m2: 32,
-    quartos: 1,
-    banheiros: 1,
-    vagas: 0,
-    condominio: 0,
-    endereco: {
-      rua: "Av. do Café, 500",
-      bairro: "Vila Guarani",
-      cidade: "São Paulo",
-      uf: "SP",
-      cep: "04311-000"
-    },
-    descricao: "Praticidade e elegância. Studio compacto perfeito para quem precisa estar perto do aeroporto de Congonhas e do centro de eventos.",
-    imagens: [getMockImage(201), getMockImage(202)],
-    destaque: true,
-    caracteristicas: ["Wi-Fi", "Coworking", "Lavanderia"],
-    airbnbUrl: "http://airbnb.com/h/imigrantes2"
-  },
-  {
-    id: "sp-003",
-    slug: "apartamento-familia-saude",
-    titulo: "Apto 2 Quartos - Saúde",
-    preco: 350, // Daily rate
-    tipo: "Apartamento",
-    status: "aluguel",
-    area_m2: 70,
-    quartos: 2,
-    banheiros: 2,
-    vagas: 1,
-    condominio: 0,
-    endereco: {
-      rua: "Rua Carneiro da Cunha, 88",
-      bairro: "Saúde",
-      cidade: "São Paulo",
-      uf: "SP",
-      cep: "04100-000"
-    },
-    descricao: "Apartamento espaçoso em andar alto. Vista livre, varanda gourmet e lazer completo no condomínio.",
-    imagens: [getMockImage(301), getMockImage(302), getMockImage(303)],
-    destaque: false,
-    caracteristicas: ["Piscina", "Varanda Gourmet", "Pet Friendly"],
-    airbnbUrl: "http://airbnb.com/h/imigrantes3"
-  }
-];
-
-// Generator to create exactly 80 properties to match the airbnb link requirement
+// Base mock data for the 80 properties
 const generateProperties = (): Property[] => {
-  const properties = [...FEATURED_PROPERTIES];
-  const types = ["Loft", "Studio", "Apartamento", "Casa"] as const;
-  const bairros = ["Jabaquara", "Vila Guarani", "Saúde", "Vila Mariana", "Moema"];
+  const properties: Property[] = [];
+  const types = ["Loft", "Studio", "Apartamento"] as const;
+  // Locais reais fornecidos pelo usuário
+  const bairros = [
+    "Imigrantes", 
+    "Fachini", 
+    "Conceição", 
+    "Jabaquara", 
+    "Butantã", 
+    "Santo Amaro"
+  ];
   
-  // Start from 4 up to 80
-  for (let i = 4; i <= 80; i++) {
+  // Create 80 properties
+  for (let i = 1; i <= 80; i++) {
     const type = types[Math.floor(Math.random() * types.length)];
     const bairro = bairros[Math.floor(Math.random() * bairros.length)];
-    const bedrooms = type === 'Casa' || type === 'Apartamento' ? Math.floor(Math.random() * 3) + 1 : 1;
+    const quartos = Math.random() > 0.7 ? 2 : 1; 
     
     properties.push({
       id: `sp-${String(i).padStart(3, '0')}`,
-      slug: `imovel-${type.toLowerCase()}-${i}`,
-      titulo: `${type} Standard - ${bairro} (Unid. ${i})`,
-      preco: 120 + Math.floor(Math.random() * 300), // Daily rates between 120 and 420
-      tipo: type,
+      slug: `hospedagem-${bairro.toLowerCase()}-${i}`,
+      titulo: `Loft Moderno ${bairro} - Unidade ${String(i).padStart(2, '0')}`,
+      preco: 190 + Math.floor(Math.random() * 300), 
+      tipo: type as any,
       status: "aluguel",
-      area_m2: 25 + Math.floor(Math.random() * 80),
-      quartos: bedrooms,
-      banheiros: 1 + Math.floor(Math.random() * 2),
-      vagas: Math.floor(Math.random() * 2),
+      area_m2: 25 + Math.floor(Math.random() * 25),
+      quartos: quartos,
+      banheiros: 1,
+      vagas: i % 4 === 0 ? 1 : 0,
       condominio: 0,
       endereco: {
-        rua: `Rua das Flores, ${i * 10}`,
+        rua: `Rua Localizada em ${bairro}, ${100 + i}`,
         bairro: bairro,
         cidade: "São Paulo",
         uf: "SP",
-        cep: "04000-000"
+        cep: "04311-000"
       },
-      descricao: `Excelente opção de ${type} para temporada em ${bairro}. Totalmente mobiliado, com internet de alta velocidade e próximo ao metrô. Ideal para eventos no Expo.`,
-      imagens: [getMockImage(i * 10), getMockImage(i * 10 + 1)],
-      destaque: Math.random() > 0.9,
-      caracteristicas: ["Segurança 24h", "Elevador", "Wi-Fi", "Ar Condicionado"],
-      airbnbUrl: `http://airbnb.com/h/imigrantes${i}`
+      descricao: `Localizada na região de ${bairro}, esta hospedagem da Spexpo oferece total praticidade. Equipada com enxoval completo, Wi-Fi de alta velocidade e móveis planejados, é a escolha ideal para quem busca conforto e proximidade com centros de eventos e metrô.`,
+      imagens: [
+          `https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1000&auto=format&fit=crop&sig=${i}`,
+          `https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=1000&auto=format&fit=crop&sig=${i+100}`,
+          `https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1000&auto=format&fit=crop&sig=${i+200}`
+      ],
+      destaque: i <= 8,
+      caracteristicas: ["wi-fi 500mb", "smart tv", "self check-in", "cama queen", "ar-condicionado"],
+      airbnbUrl: `https://www.airbnb.com.br/rooms/1553101057890730646`,
+      icalUrl: `https://www.airbnb.com.br/calendar/ical/1553101057890730646.ics?s=a6f2dbb1e63508441d685f149313b24b`
     });
   }
   return properties;
@@ -132,8 +57,7 @@ const generateProperties = (): Property[] => {
 const ALL_PROPERTIES = generateProperties();
 
 export const fetchProperties = async (page = 1, limit = 12, filters?: any): Promise<{ data: Property[], total: number }> => {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 600));
+  await new Promise(resolve => setTimeout(resolve, 400));
 
   let filtered = ALL_PROPERTIES;
 
@@ -142,24 +66,16 @@ export const fetchProperties = async (page = 1, limit = 12, filters?: any): Prom
       const s = filters.search.toLowerCase();
       filtered = filtered.filter(p => 
         p.titulo.toLowerCase().includes(s) || 
-        p.endereco.bairro.toLowerCase().includes(s)
+        p.endereco.bairro.toLowerCase().includes(s) ||
+        p.endereco.rua.toLowerCase().includes(s)
       );
     }
     if (filters.type && filters.type !== 'Todos') {
       filtered = filtered.filter(p => p.tipo === filters.type);
     }
-    if (filters.minPrice) {
-      filtered = filtered.filter(p => p.preco >= Number(filters.minPrice));
-    }
-    if (filters.maxPrice) {
-      filtered = filtered.filter(p => p.preco <= Number(filters.maxPrice));
-    }
-    if (filters.bedrooms && filters.bedrooms !== 'Qualquer') {
-      if (filters.bedrooms === '4+') {
-        filtered = filtered.filter(p => p.quartos >= 4);
-      } else {
-        filtered = filtered.filter(p => p.quartos === Number(filters.bedrooms));
-      }
+    // Filtro por Bairro (Região)
+    if (filters.bairro && filters.bairro !== 'Todas as Regiões') {
+      filtered = filtered.filter(p => p.endereco.bairro === filters.bairro);
     }
   }
 
@@ -173,11 +89,11 @@ export const fetchProperties = async (page = 1, limit = 12, filters?: any): Prom
 };
 
 export const fetchPropertyById = async (id: string): Promise<Property | undefined> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
+  await new Promise(resolve => setTimeout(resolve, 200));
   return ALL_PROPERTIES.find(p => p.id === id);
 };
 
 export const fetchFeaturedProperties = async (): Promise<Property[]> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  return ALL_PROPERTIES.filter(p => p.destaque).slice(0, 4);
+  await new Promise(resolve => setTimeout(resolve, 200));
+  return ALL_PROPERTIES.filter(p => p.destaque);
 };
