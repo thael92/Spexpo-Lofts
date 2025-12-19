@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, MapPin, ChevronRight, Navigation, Map as MapIcon, RotateCcw } from 'lucide-react';
+import { X, MapPin, Navigation, RotateCcw } from 'lucide-react';
 import { POI_ICONS, POINTS_OF_INTEREST, Category, POI } from '../data/pointsOfInterest';
 
 interface LocationModalProps {
@@ -14,192 +14,148 @@ export const LocationModal: React.FC<LocationModalProps> = ({ isOpen, onClose, i
 
   if (!isOpen) return null;
 
-  // Logic to construct the Map URL
-  // If a POI is selected, we use 'saddr' (Start Address) and 'daddr' (Destination Address) to show a route line.
-  // If no POI is selected, we just show the marker for the property ('q').
   const getMapUrl = () => {
+    // Origem limpa: Rua, Bairro, São Paulo, SP
+    const origin = encodeURIComponent(`${initialAddress}, São Paulo, SP`);
+    
     if (selectedPOI) {
-      const origin = encodeURIComponent(initialAddress);
-      const dest = encodeURIComponent(selectedPOI.address);
-      // z=14 sets a good zoom level for routes
-      return `https://maps.google.com/maps?saddr=${origin}&daddr=${dest}&ie=UTF8&output=embed`;
+      // Destino limpo: Nome do Local, Endereço, São Paulo, SP
+      const dest = encodeURIComponent(`${selectedPOI.name}, ${selectedPOI.address}, São Paulo, SP`);
+      // O formato 'q=from:X+to:Y' é o mais eficaz para forçar a exibição do trajeto no iframe embed
+      return `https://maps.google.com/maps?f=d&saddr=${origin}&daddr=${dest}&hl=pt-br&ie=UTF8&output=embed&z=14&t=m`;
     }
-    const location = encodeURIComponent(initialAddress);
-    return `https://maps.google.com/maps?q=${location}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
+    
+    // Visualização simples do ponto da hospedagem
+    return `https://maps.google.com/maps?q=${origin}&hl=pt-br&ie=UTF8&output=embed&z=16&t=m`;
   };
 
   const mapUrl = getMapUrl();
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center sm:p-4 bg-black/80 backdrop-blur-sm">
-      {/* Modal Window */}
-      <div className="bg-white w-full h-[100dvh] sm:h-[90vh] md:max-w-6xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in fade-in zoom-in duration-300">
+    <div className="fixed inset-0 z-[130] flex items-center justify-center bg-black/80 backdrop-blur-md transition-all duration-300">
+      
+      {/* Modal Container */}
+      <div className="bg-white w-full h-full md:h-[90vh] md:max-w-7xl md:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col md:flex-row animate-in fade-in zoom-in duration-300">
         
-        {/* Sidebar (Header + List) */}
-        <div className="w-full md:w-1/3 h-[60%] md:h-full flex flex-col bg-gray-50 border-b md:border-b-0 md:border-r border-gray-200 order-1 md:order-1 relative z-10">
+        {/* Painel Lateral de Controle */}
+        <div className="w-full md:w-[350px] flex flex-col bg-white border-r border-gray-100 z-20 shadow-xl md:shadow-none">
           
-          {/* Header */}
-          <div className="p-4 md:p-6 bg-brand-red text-white relative overflow-hidden flex-shrink-0 flex justify-between items-start">
-            <div className="relative z-10">
-                <h2 className="text-xl md:text-2xl font-bold flex items-center gap-2">
-                    <Navigation size={24} /> Explorar Região
-                </h2>
-                <p className="text-red-100 text-xs md:text-sm mt-1">Veja rotas e distâncias do imóvel</p>
+          {/* Header do Modal */}
+          <div className="p-6 md:p-8 pb-4 flex justify-between items-start">
+            <div>
+              <h2 className="text-xl font-black text-neutral-900 tracking-tighter uppercase italic flex items-center gap-2">
+                <Navigation className="text-brand-red" size={20} /> Explorar Rotas
+              </h2>
+              <p className="text-gray-400 text-[9px] font-black uppercase tracking-widest mt-1">Clique nos locais para ver o trajeto</p>
             </div>
-            <button 
-                onClick={onClose}
-                className="md:hidden text-white/80 hover:text-white p-1"
-            >
-                <X size={24} />
+            <button onClick={onClose} className="p-2 bg-gray-50 rounded-full text-neutral-900 hover:bg-neutral-900 hover:text-white transition-all">
+              <X size={20} />
             </button>
-            
-            {/* Decorative shape */}
-            <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
           </div>
 
-          {/* Category Tabs */}
-          <div className="flex-shrink-0 bg-white border-b border-gray-200 shadow-sm z-10">
-            <div className="flex overflow-x-auto p-3 gap-2 scrollbar-hide">
+          {/* Seleção de Categorias */}
+          <div className="px-6 md:px-8 mb-4">
+            <div className="flex md:grid md:grid-cols-2 gap-2 overflow-x-auto pb-4 md:pb-0 scrollbar-hide">
                 {(Object.keys(POINTS_OF_INTEREST) as Category[]).map((cat) => {
-                const Icon = POI_ICONS[cat];
-                return (
+                  const Icon = POI_ICONS[cat];
+                  return (
                     <button
-                    key={cat}
-                    onClick={() => { setActiveCategory(cat); setSelectedPOI(null); }}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full whitespace-nowrap text-xs md:text-sm font-medium transition-all flex-shrink-0 ${
-                        activeCategory === cat 
-                        ? 'bg-brand-red text-white shadow-md' 
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
+                      key={cat}
+                      onClick={() => { setActiveCategory(cat); setSelectedPOI(null); }}
+                      className={`flex items-center gap-2 px-3 py-2.5 rounded-xl whitespace-nowrap text-[9px] font-black uppercase tracking-widest transition-all ${
+                          activeCategory === cat 
+                          ? 'bg-neutral-900 text-white shadow-lg' 
+                          : 'bg-gray-50 text-gray-400 hover:bg-gray-100 border border-gray-100'
+                      }`}
                     >
-                    <Icon size={14} />
-                    {cat}
+                      <Icon size={12} /> {cat}
                     </button>
-                );
+                  );
                 })}
             </div>
           </div>
 
-          {/* POI List */}
-          <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 bg-gray-50">
-            {/* Default Item (Property Location - Reset Button) */}
-            <div 
-                className={`p-3 rounded-xl border-2 transition-all cursor-pointer group ${
+          {/* Lista de Locais - Desktop */}
+          <div className="flex-1 overflow-y-auto px-6 md:px-8 pb-10 hidden md:block">
+            <div className="space-y-3">
+               <button 
+                  onClick={() => setSelectedPOI(null)}
+                  className={`w-full text-left p-4 rounded-2xl border-2 transition-all group flex items-center justify-between ${
                     !selectedPOI 
-                        ? 'border-brand-red bg-white shadow-md' 
-                        : 'border-transparent bg-white hover:bg-gray-100'
-                }`}
-                onClick={() => setSelectedPOI(null)}
-            >
-                <div className="flex items-center justify-between">
-                    <div>
-                        <h4 className="font-bold text-gray-900 text-sm flex items-center gap-1">
-                            <MapPin size={16} className={!selectedPOI ? "text-brand-red" : "text-gray-400"} /> 
-                            Sua Localização (Imóvel)
-                        </h4>
-                        <p className="text-xs text-gray-500 mt-1 line-clamp-1">{initialAddress}</p>
-                    </div>
-                    {selectedPOI && (
-                        <span className="text-xs text-gray-400 group-hover:text-brand-red flex items-center gap-1">
-                           <RotateCcw size={12} /> Resetar mapa
-                        </span>
-                    )}
-                </div>
+                      ? 'border-brand-red bg-red-50/30' 
+                      : 'border-transparent bg-gray-50'
+                  }`}
+               >
+                  <div>
+                    <h4 className="font-black text-neutral-900 text-[10px] uppercase tracking-widest mb-1 flex items-center gap-2">
+                       <MapPin size={12} className={!selectedPOI ? "text-brand-red" : "text-gray-300"} /> Minha Hospedagem
+                    </h4>
+                    <p className="text-[9px] text-gray-400 font-bold truncate max-w-[180px]">{initialAddress}</p>
+                  </div>
+                  {selectedPOI && <RotateCcw size={12} className="text-gray-300 group-hover:text-neutral-900" />}
+               </button>
+
+               <div className="pt-4 pb-1 border-b border-gray-50">
+                  <span className="text-[8px] font-black text-gray-300 uppercase tracking-[0.3em]">{activeCategory} na região</span>
+               </div>
+
+               {POINTS_OF_INTEREST[activeCategory].map((poi, idx) => (
+                <button
+                  key={`${activeCategory}-${idx}`}
+                  onClick={() => setSelectedPOI(poi)}
+                  className={`w-full text-left p-4 rounded-2xl border-2 transition-all ${
+                    selectedPOI?.name === poi.name 
+                      ? 'border-brand-red bg-white shadow-lg -translate-y-0.5' 
+                      : 'border-transparent bg-gray-50 hover:bg-gray-100'
+                  }`}
+                >
+                  <div className="flex justify-between items-center gap-2 mb-1">
+                      <h3 className="font-black text-neutral-900 text-[10px] uppercase tracking-tight line-clamp-1">{poi.name}</h3>
+                      <span className="text-[8px] font-black px-1.5 py-0.5 rounded-md bg-neutral-900 text-white shrink-0">
+                        {poi.distance || 'ver rota'}
+                      </span>
+                  </div>
+                  <p className="text-[9px] text-gray-400 font-bold truncate">{poi.address}</p>
+                </button>
+               ))}
             </div>
-
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider px-2 mt-4 mb-2 flex items-center justify-between">
-                <span>{activeCategory}</span>
-                <span className="text-[10px] bg-gray-200 px-2 rounded-full">Clique para ver rota</span>
-            </p>
-
-            {POINTS_OF_INTEREST[activeCategory].map((poi, idx) => (
-              <button
-                key={idx}
-                onClick={() => setSelectedPOI(poi)}
-                className={`w-full text-left p-3 rounded-xl border-2 transition-all ${
-                  selectedPOI === poi 
-                    ? 'border-brand-red bg-white shadow-md ring-1 ring-red-100' 
-                    : 'border-transparent bg-white hover:bg-gray-100 border-gray-100'
-                }`}
+          </div>
+          
+          {/* Lista de Locais - Mobile (Horizontal e Compacta) */}
+          <div className="md:hidden overflow-x-auto px-6 pb-6 flex gap-2 scrollbar-hide">
+              <button 
+                  onClick={() => setSelectedPOI(null)}
+                  className={`p-3.5 rounded-xl border-2 flex-shrink-0 transition-all ${!selectedPOI ? 'border-brand-red bg-red-50' : 'bg-gray-50 border-transparent'}`}
               >
-                <div className="flex justify-between items-start gap-2">
-                    <h3 className="font-bold text-gray-800 text-sm line-clamp-1">{poi.name}</h3>
-                    {poi.distance && (
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${selectedPOI === poi ? 'bg-brand-red text-white' : 'bg-gray-200 text-gray-700'}`}>
-                            {poi.distance}
-                        </span>
-                    )}
-                </div>
-                <p className="text-xs text-gray-500 mt-1 line-clamp-1">{poi.address}</p>
-                {selectedPOI === poi && (
-                    <div className="mt-2 text-xs text-brand-red flex items-center gap-1 font-medium animate-pulse">
-                        <Navigation size={12} />
-                        <span>Mostrando rota no mapa...</span>
-                    </div>
-                )}
+                  <MapPin size={16} className={!selectedPOI ? "text-brand-red" : "text-gray-300"} />
               </button>
-            ))}
+              {POINTS_OF_INTEREST[activeCategory].map((poi, idx) => (
+                <button
+                  key={`mob-${idx}`}
+                  onClick={() => setSelectedPOI(poi)}
+                  className={`px-4 py-3 rounded-xl border-2 flex-shrink-0 transition-all ${selectedPOI?.name === poi.name ? 'border-brand-red bg-white shadow-md scale-95' : 'bg-gray-50 border-transparent'}`}
+                >
+                  <div className="flex flex-col items-start gap-0.5">
+                      <span className="text-[9px] font-black text-neutral-900 uppercase whitespace-nowrap">{poi.name}</span>
+                      <span className="text-[8px] font-bold text-gray-400">Ver Trajeto</span>
+                  </div>
+                </button>
+              ))}
           </div>
         </div>
 
-        {/* Map Area */}
-        <div className="w-full md:w-2/3 h-[40%] md:h-full relative bg-gray-200 order-2 md:order-2">
+        {/* Área do Mapa - Totalmente limpa e despoluída */}
+        <div className="flex-1 relative bg-gray-50 h-full">
             <iframe
-                key={selectedPOI ? selectedPOI.name : 'default'} // Force re-render on change
-                title="Map"
+                key={selectedPOI ? `route-v2-${selectedPOI.name}` : 'default-v2'}
+                title="Mapa de Trajeto"
                 width="100%"
                 height="100%"
                 frameBorder="0"
-                scrolling="no"
-                marginHeight={0}
-                marginWidth={0}
                 src={mapUrl}
-                className="w-full h-full"
+                className="w-full h-full transition-opacity duration-500"
                 allowFullScreen
             ></iframe>
-
-            {/* Desktop Close Button */}
-            <button 
-                onClick={onClose}
-                className="hidden md:flex absolute top-4 right-4 bg-white hover:bg-gray-100 text-gray-800 p-2 rounded-full shadow-lg transition-colors z-20"
-            >
-                <X size={24} />
-            </button>
-
-            {/* Info Overlay */}
-            <div className="absolute bottom-6 left-6 right-6 md:right-auto md:w-80 bg-white/95 backdrop-blur-md p-4 rounded-xl shadow-xl border border-gray-100 pointer-events-none md:pointer-events-auto">
-                <div className="flex items-start gap-3">
-                    <div className={`p-2 rounded-full flex-shrink-0 ${selectedPOI ? 'bg-brand-red text-white' : 'bg-gray-100 text-gray-500'}`}>
-                        {selectedPOI ? <Navigation size={20} /> : <MapPin size={20} />}
-                    </div>
-                    <div>
-                        <h4 className="font-bold text-gray-900 text-sm md:text-base leading-tight">
-                            {selectedPOI ? `Rota para ${selectedPOI.name}` : "Localização do Imóvel"}
-                        </h4>
-                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">
-                            {selectedPOI ? selectedPOI.address : initialAddress}
-                        </p>
-                        
-                        {selectedPOI && selectedPOI.distance && (
-                            <div className="mt-2 inline-flex items-center gap-1.5 bg-red-50 text-brand-red px-2 py-1 rounded-md text-xs font-bold border border-red-100">
-                                <MapIcon size={12} />
-                                Distância: {selectedPOI.distance}
-                            </div>
-                        )}
-                        
-                        <div className="mt-3 pointer-events-auto">
-                            <a 
-                                href={`https://www.google.com/maps/dir/${encodeURIComponent(initialAddress)}/${encodeURIComponent(selectedPOI ? selectedPOI.address : '')}`} 
-                                target="_blank" 
-                                rel="noreferrer"
-                                className="text-xs font-bold text-brand-red hover:text-red-800 hover:underline flex items-center gap-1"
-                            >
-                                Abrir GPS (Google Maps) <ChevronRight size={12} />
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
       </div>
     </div>
