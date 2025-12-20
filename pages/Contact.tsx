@@ -1,19 +1,21 @@
 import React from 'react';
 import { Phone, Mail, MapPin, Clock, MessageSquare } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export const Contact: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Header */}
       <div className="bg-neutral-900 text-white py-20 relative overflow-hidden">
         <div className="container mx-auto px-4 relative z-10 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Fale Conosco</h1>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Estamos prontos para atender você. Entre em contato para dúvidas, reservas ou parcerias.
+            <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase mb-4">{t('contact.title')}</h1>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto font-light">
+              {t('contact.subtitle')}
             </p>
         </div>
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-gray-50/5"></div>
-        <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-brand-red/10 rounded-full blur-3xl"></div>
       </div>
 
       <div className="container mx-auto px-4 py-16">
@@ -22,9 +24,9 @@ export const Contact: React.FC = () => {
           {/* Contact Info */}
           <div className="space-y-8">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">Canais de Atendimento</h2>
-              <p className="text-gray-600 mb-8">
-                Prefere um atendimento rápido? Chame nossa equipe no WhatsApp ou ligue diretamente.
+              <h2 className="text-3xl font-black text-neutral-900 mb-6 tracking-tight">{t('contact.channels')}</h2>
+              <p className="text-gray-500 mb-8 font-light">
+                {t('contact.desc')}
               </p>
             </div>
 
@@ -40,9 +42,8 @@ export const Contact: React.FC = () => {
                   <MessageSquare size={28} />
                 </div>
                 <div>
-                  <span className="block text-sm font-bold text-gray-400 uppercase tracking-wide">WhatsApp</span>
-                  <span className="block text-xl font-bold text-gray-900">(11) 98128-0238</span>
-                  <span className="text-sm text-green-600 font-medium">Atendimento Rápido</span>
+                  <span className="block text-[10px] font-black text-gray-400 uppercase tracking-widest">WhatsApp</span>
+                  <span className="block text-xl font-black text-gray-900">(11) 98128-0238</span>
                 </div>
               </a>
 
@@ -55,47 +56,47 @@ export const Contact: React.FC = () => {
                   <Phone size={28} />
                 </div>
                 <div>
-                  <span className="block text-sm font-bold text-gray-400 uppercase tracking-wide">Telefone</span>
-                  <span className="block text-xl font-bold text-gray-900">(11) 98128-0238</span>
+                  <span className="block text-[10px] font-black text-gray-400 uppercase tracking-widest">Telefone</span>
+                  <span className="block text-xl font-black text-gray-900">(11) 98128-0238</span>
                 </div>
               </a>
 
               {/* Email Card */}
               <a 
-                href="mailto:raul@spexpolofts.com.br" 
+                href="mailto:contato@spexpolofts.com.br" 
                 className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-6 hover:shadow-md transition-shadow group"
               >
                 <div className="w-14 h-14 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
                   <Mail size={28} />
                 </div>
                 <div>
-                  <span className="block text-sm font-bold text-gray-400 uppercase tracking-wide">E-mail</span>
-                  <span className="block text-lg font-bold text-gray-900 break-all">raul@spexpolofts.com.br</span>
+                  <span className="block text-[10px] font-black text-gray-400 uppercase tracking-widest">E-mail</span>
+                  <span className="block text-lg font-black text-gray-900 break-all">contato@spexpolofts.com.br</span>
                 </div>
               </a>
             </div>
 
-             <div className="bg-gray-100 p-6 rounded-2xl mt-8">
-                <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-2">
-                    <Clock size={20} className="text-gray-500" /> Horário de Atendimento
+             <div className="bg-gray-100 p-8 rounded-3xl mt-8">
+                <h3 className="font-black text-neutral-900 flex items-center gap-3 mb-4 uppercase text-xs tracking-widest">
+                    <Clock size={18} className="text-brand-red" /> {t('contact.hours')}
                 </h3>
-                <p className="text-gray-600">Segunda a Sexta: 09h às 18h<br/>Sábados: 09h às 13h</p>
+                <p className="text-gray-500 whitespace-pre-line text-sm font-medium leading-relaxed">
+                   {t('contact.hours.detail')}
+                </p>
              </div>
           </div>
 
           {/* Map / Location */}
-          <div className="bg-white p-2 rounded-2xl shadow-sm border border-gray-100 h-full min-h-[400px] flex flex-col">
-             <div className="p-6 pb-2">
-                <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2 mb-2">
-                    <MapPin className="text-brand-red" /> Nossa Localização
+          <div className="bg-white p-2 rounded-3xl shadow-sm border border-gray-100 h-full min-h-[400px] flex flex-col">
+             <div className="p-8 pb-4">
+                <h3 className="text-xl font-black text-neutral-900 flex items-center gap-3 mb-4 uppercase text-xs tracking-widest">
+                    <MapPin className="text-brand-red" /> {t('contact.loc')}
                 </h3>
-                <p className="text-gray-600 text-sm">
-                    Rua Maringá, 106 - Vila Guarani<br/>
-                    São Paulo - SP, 04311-000<br/>
-                    <span className="text-brand-red font-semibold text-xs">(Próximo ao Metrô Jabaquara e SP Expo)</span>
+                <p className="text-gray-500 text-sm font-medium whitespace-pre-line leading-relaxed">
+                    {t('contact.loc.detail')}
                 </p>
              </div>
-             <div className="flex-grow mt-4 rounded-xl overflow-hidden bg-gray-200 relative">
+             <div className="flex-grow mt-4 rounded-2xl overflow-hidden bg-gray-200 relative grayscale hover:grayscale-0 transition-all duration-700">
                 <iframe 
                     title="Localização Spexpo"
                     width="100%" 

@@ -1,3 +1,5 @@
+export type Language = 'pt' | 'en' | 'es';
+
 export interface Address {
   rua: string;
   bairro: string;

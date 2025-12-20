@@ -9,8 +9,8 @@ export const PropertyCard: React.FC<{ property: Property }> = ({ property }) => 
   const [currentImg, setCurrentImg] = useState(0);
   const favorite = isFavorite(property.id);
 
-  // Simulação de quantidade de pessoas baseada nos quartos (2 por quarto)
-  const pessoas = property.quartos * 2;
+  // Capacidade padrão para os lofts da Spexpo (Geralmente 1 cama queen + 1 sofá-cama)
+  const pessoas = 4;
 
   const nextImg = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -92,7 +92,7 @@ export const PropertyCard: React.FC<{ property: Property }> = ({ property }) => 
         
         {/* Atributos Principais */}
         <div className="flex items-center gap-3 text-[13px] font-medium text-gray-400 mb-2">
-            <span>{pessoas} pessoas</span>
+            <span>Até {pessoas} pessoas</span>
             <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
             <span>{property.quartos} {property.quartos > 1 ? 'quartos' : 'quarto'}</span>
             <span className="w-1 h-1 bg-gray-300 rounded-full"></span>

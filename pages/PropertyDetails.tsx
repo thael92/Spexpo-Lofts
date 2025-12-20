@@ -12,8 +12,8 @@ import { LocationModal } from '../components/LocationModal';
 import { AvailabilityCalendar } from '../components/AvailabilityCalendar';
 import { PhotoGalleryModal } from '../components/PhotoGalleryModal';
 import { PropertyCard } from '../components/PropertyCard';
+import { useLanguage } from '../contexts/LanguageContext';
 
-// Mapeamento de ícones para comodidades
 const getIcon = (feature: string) => {
   const f = feature.toLowerCase();
   if (f.includes('wi-fi') || f.includes('internet')) return <Wifi size={20} />;
@@ -30,6 +30,7 @@ const getIcon = (feature: string) => {
 export const PropertyDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const [property, setProperty] = useState<Property | null>(null);
   const [similarProperties, setSimilarProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,7 +62,7 @@ export const PropertyDetails: React.FC = () => {
         setLoading(false);
       });
     }
-  }, [id]);
+  }, [id, language]); // Re-carrega se o idioma mudar para traduzir textos dinâmicos se houver
 
   useEffect(() => {
     if (checkIn && checkOut) {
@@ -108,32 +109,25 @@ export const PropertyDetails: React.FC = () => {
     <div className="h-screen flex items-center justify-center bg-white">
       <div className="flex flex-col items-center gap-4">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-red"></div>
-        <span className="text-gray-400 font-bold uppercase tracking-widest text-xs">Carregando Detalhes...</span>
+        <span className="text-gray-400 font-bold uppercase tracking-widest text-xs">...</span>
       </div>
     </div>
   );
   
   if (!property) return <div className="h-screen flex flex-col items-center justify-center">
-    <h2 className="text-2xl font-bold text-gray-800 mb-4">Hospedagem não encontrada</h2>
-    <Link to="/imoveis" className="text-brand-red hover:underline">Voltar para listagem</Link>
+    <h2 className="text-2xl font-bold text-gray-800 mb-4">Not found</h2>
+    <Link to="/imoveis" className="text-brand-red hover:underline">Back</Link>
   </div>;
 
-  const formatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+  const localeMap = { pt: 'pt-BR', en: 'en-US', es: 'es-ES' };
+  const formatter = new Intl.NumberFormat(localeMap[language], { style: 'currency', currency: 'BRL' });
   const totalValue = nights * property.preco;
 
   const displayedAmenities = showAllAmenities 
     ? property.caracteristicas 
     : property.caracteristicas.slice(0, 6);
 
-  const allImages = property.imagens.length > 1 
-    ? property.imagens 
-    : [
-        property.imagens[0],
-        "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1513694203232-719a280e022f?q=80&w=1000&auto=format&fit=crop",
-        "https://images.unsplash.com/photo-1484154218962-a197022b5858?q=80&w=1000&auto=format&fit=crop"
-      ];
+  const allImages = property.imagens;
 
   return (
     <div className="bg-white min-h-screen pb-20 pt-20">
@@ -150,13 +144,12 @@ export const PropertyDetails: React.FC = () => {
         initialIndex={galleryIndex}
       />
 
-      {/* Header */}
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
            <div>
               <div className="flex items-center gap-2 text-xs font-black text-brand-red uppercase tracking-[0.2em] mb-3">
                  <div className="h-[2px] w-8 bg-brand-red"></div>
-                 {property.tipo} em {property.endereco.bairro}
+                 {property.tipo} {language === 'pt' ? 'em' : language === 'en' ? 'in' : 'en'} {property.endereco.bairro}
               </div>
               <h1 className="text-3xl md:text-5xl font-black text-neutral-900 leading-tight">
                 {property.titulo}
@@ -168,39 +161,31 @@ export const PropertyDetails: React.FC = () => {
            </div>
            <div className="flex items-center gap-3">
               <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all font-bold text-xs text-gray-600 uppercase tracking-widest">
-                 <Share2 size={16} /> Compartilhar
+                 <Share2 size={16} />
               </button>
               <button className="flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-all font-bold text-xs text-gray-600 uppercase tracking-widest">
-                 <Heart size={16} /> Favoritar
+                 <Heart size={16} />
               </button>
            </div>
         </div>
       </div>
 
-      {/* Hero Gallery */}
       <div className="container mx-auto px-4 mb-12">
         <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-3 h-[400px] md:h-[600px] rounded-3xl overflow-hidden relative group">
            <div onClick={() => openGallery(0)} className="md:col-span-2 md:row-span-2 relative overflow-hidden cursor-pointer">
-              <img src={allImages[0]} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="Vista Principal" />
+              <img src={allImages[0]} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="Main" />
            </div>
-           <div onClick={() => openGallery(1)} className="hidden md:block overflow-hidden cursor-pointer">
-              <img src={allImages[1]} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="Foto 2" />
-           </div>
-           <div onClick={() => openGallery(2)} className="hidden md:block overflow-hidden rounded-tr-3xl cursor-pointer">
-              <img src={allImages[2]} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="Foto 3" />
-           </div>
-           <div onClick={() => openGallery(3)} className="hidden md:block overflow-hidden cursor-pointer">
-              <img src={allImages[3]} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="Foto 4" />
-           </div>
-           <div onClick={() => openGallery(4)} className="hidden md:block overflow-hidden rounded-br-3xl cursor-pointer">
-              <img src={allImages[4]} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt="Foto 5" />
-           </div>
+           {allImages.slice(1, 5).map((img, i) => (
+             <div key={i} onClick={() => openGallery(i + 1)} className="hidden md:block overflow-hidden cursor-pointer">
+                <img src={img} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" alt={`Img ${i}`} />
+             </div>
+           ))}
            
            <button 
             onClick={() => openGallery(0)}
             className="absolute bottom-6 right-6 bg-white text-neutral-900 px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest shadow-2xl flex items-center gap-2 hover:bg-neutral-100 transition-all"
            >
-              <Maximize2 size={16} /> Ver Fotos
+              <Maximize2 size={16} />
            </button>
         </div>
       </div>
@@ -208,58 +193,55 @@ export const PropertyDetails: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="flex flex-col lg:flex-row gap-16">
           <div className="lg:w-2/3">
-            {/* Quick Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-b border-gray-100 mb-10">
                <div className="flex items-center gap-3">
                   <div className="p-3 bg-gray-50 rounded-xl text-brand-red"><Users size={24} /></div>
                   <div>
-                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Hóspedes</p>
+                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('prop.guests')}</p>
                      <p className="font-bold text-gray-900">Até 4</p>
                   </div>
                </div>
                <div className="flex items-center gap-3">
                   <div className="p-3 bg-gray-50 rounded-xl text-brand-red"><BedDouble size={24} /></div>
                   <div>
-                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Quartos</p>
-                     <p className="font-bold text-gray-900">{property.quartos} Unidade</p>
+                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('prop.bedrooms')}</p>
+                     <p className="font-bold text-gray-900">{property.quartos}</p>
                   </div>
                </div>
                <div className="flex items-center gap-3">
                   <div className="p-3 bg-gray-50 rounded-xl text-brand-red"><Bath size={24} /></div>
                   <div>
-                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Banheiros</p>
-                     <p className="font-bold text-gray-900">{property.banheiros} WC</p>
+                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('prop.bathrooms')}</p>
+                     <p className="font-bold text-gray-900">{property.banheiros}</p>
                   </div>
                </div>
                <div className="flex items-center gap-3">
                   <div className="p-3 bg-gray-50 rounded-xl text-brand-red"><Square size={24} /></div>
                   <div>
-                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Área</p>
+                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('prop.area')}</p>
                      <p className="font-bold text-gray-900">{property.area_m2}m²</p>
                   </div>
                </div>
             </div>
 
-            {/* Description */}
             <div className="mb-16">
                <h3 className="text-2xl font-black text-neutral-900 mb-6 flex items-center gap-3">
                   <div className="h-6 w-1 bg-brand-red"></div>
-                  Descrição da Hospedagem
+                  {t('prop.desc')}
                </h3>
                <p className="text-gray-500 text-lg leading-relaxed font-light">
                  {property.descricao}
                </p>
             </div>
 
-            {/* Amenities Section */}
             <div className="mb-16">
                <h3 className="text-2xl font-black text-neutral-900 mb-8 flex items-center gap-3">
                   <div className="h-6 w-1 bg-brand-red"></div>
-                  Comodidades e Facilidades
+                  {t('prop.amenities')}
                </h3>
                <div className="grid grid-cols-2 md:grid-cols-3 gap-y-8 gap-x-4">
                   {displayedAmenities.map((feature, idx) => (
-                    <div key={idx} className="flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div key={idx} className="flex items-center gap-4">
                        <div className="w-12 h-12 bg-neutral-900 text-white rounded-xl flex items-center justify-center shrink-0">
                           {getIcon(feature)}
                        </div>
@@ -267,21 +249,12 @@ export const PropertyDetails: React.FC = () => {
                     </div>
                   ))}
                </div>
-               
-               <button 
-                  onClick={() => setShowAllAmenities(!showAllAmenities)}
-                  className="mt-12 w-full md:w-auto border-2 border-neutral-900 text-neutral-900 px-10 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-neutral-900 hover:text-white transition-all flex items-center justify-center gap-2"
-               >
-                  {showAllAmenities ? 'Mostrar menos' : `Mostrar todas as ${property.caracteristicas.length} comodidades`}
-                  <ChevronLeft className={`transition-transform duration-300 ${showAllAmenities ? 'rotate-90' : '-rotate-90'}`} size={16} />
-               </button>
             </div>
 
-            {/* Map Preview */}
             <div className="mb-16">
                <h3 className="text-2xl font-black text-neutral-900 mb-8 flex items-center gap-3">
                   <div className="h-6 w-1 bg-brand-red"></div>
-                  Localização Privilegiada
+                  {t('prop.location')}
                </h3>
                <div className="relative h-80 rounded-3xl overflow-hidden shadow-xl group cursor-pointer" onClick={() => setIsMapOpen(true)}>
                   <iframe 
@@ -289,50 +262,33 @@ export const PropertyDetails: React.FC = () => {
                     src={`https://maps.google.com/maps?q=${encodeURIComponent(property.endereco.rua)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
                     className="w-full h-full grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700 pointer-events-none"
                   ></iframe>
-                  <div className="absolute inset-0 bg-neutral-900/10 flex items-center justify-center">
-                     <div className="bg-white text-neutral-900 px-8 py-4 rounded-2xl shadow-2xl font-black text-xs uppercase tracking-widest flex items-center gap-2 group-hover:scale-110 transition-transform">
-                        <MapIcon size={20} className="text-brand-red" /> Explorar Arredores
-                     </div>
-                  </div>
                </div>
             </div>
           </div>
 
-          {/* Right Sidebar */}
           <div className="lg:w-1/3">
              <div className="sticky top-28 bg-white border border-gray-100 rounded-[2rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] p-8">
                 <div className="flex justify-between items-end mb-8">
                    <div>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Diárias a partir de</p>
+                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">{t('prop.price_from')}</p>
                       <div className="flex items-baseline gap-1">
                          <span className="text-4xl font-black text-neutral-900">{formatter.format(property.preco).split(',')[0]}</span>
-                         <span className="text-sm font-bold text-gray-400">/noite</span>
+                         <span className="text-sm font-bold text-gray-400">/{t('prop.night')}</span>
                       </div>
-                   </div>
-                   <div className="flex items-center gap-1 text-xs font-bold text-brand-red bg-red-50 px-3 py-1.5 rounded-full">
-                      5.0 ★ <span className="text-gray-400 font-medium">(Airbnb)</span>
                    </div>
                 </div>
 
                 <div className="space-y-6">
-                   <div className="bg-gray-50 border border-gray-100 rounded-3xl overflow-hidden">
-                      <AvailabilityCalendar icalUrl={property.icalUrl} onRangeChange={handleRangeChange} />
-                   </div>
+                   <AvailabilityCalendar icalUrl={property.icalUrl} onRangeChange={handleRangeChange} />
 
                    {nights > 0 && (
-                      <div className="bg-neutral-900 text-white rounded-3xl p-6 animate-in slide-in-from-top duration-300">
+                      <div className="bg-neutral-900 text-white rounded-3xl p-6">
                          <div className="flex justify-between text-[10px] font-black uppercase tracking-widest opacity-60 mb-4">
-                            <span>Resumo</span>
-                            <span>{nights} noites</span>
-                         </div>
-                         <div className="space-y-3 mb-6">
-                            <div className="flex justify-between text-sm">
-                               <span className="opacity-70 font-medium">{formatter.format(property.preco)} x {nights} noites</span>
-                               <span className="font-bold">{formatter.format(totalValue)}</span>
-                            </div>
+                            <span>{t('prop.summary')}</span>
+                            <span>{nights} {t('prop.nights')}</span>
                          </div>
                          <div className="flex justify-between items-center pt-4 border-t border-white/10">
-                            <span className="text-lg font-black uppercase tracking-tighter">Total</span>
+                            <span className="text-lg font-black uppercase tracking-tighter">{t('prop.total')}</span>
                             <span className="text-2xl font-black">{formatter.format(totalValue)}</span>
                          </div>
                       </div>
@@ -341,13 +297,13 @@ export const PropertyDetails: React.FC = () => {
                    <div className="space-y-4">
                       <div className="p-4 bg-gray-50 rounded-2xl flex items-center justify-between border border-gray-100">
                          <div>
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Hóspedes</p>
-                            <p className="font-bold text-neutral-900 text-sm">{adults} Adultos, {childrenCount} Crianças</p>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t('prop.guests')}</p>
+                            <p className="font-bold text-neutral-900 text-sm">{adults} {t('prop.adults')}, {childrenCount} {t('prop.children')}</p>
                          </div>
                          <div className="flex items-center gap-2">
-                            <button onClick={() => setAdults(Math.max(1, adults-1))} className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-white">-</button>
+                            <button onClick={() => setAdults(Math.max(1, adults-1))} className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center">-</button>
                             <span className="font-bold w-4 text-center">{adults}</span>
-                            <button onClick={() => setAdults(Math.min(maxGuests, adults+1))} className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center hover:bg-white">+</button>
+                            <button onClick={() => setAdults(Math.min(maxGuests, adults+1))} className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center">+</button>
                          </div>
                       </div>
 
@@ -357,33 +313,21 @@ export const PropertyDetails: React.FC = () => {
                         rel="noopener noreferrer"
                         className="w-full bg-brand-red text-white py-6 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl hover:bg-red-800 transition-all flex items-center justify-center gap-3 group"
                       >
-                        RESERVAR AGORA <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                        {t('prop.reserve')} <ArrowRight size={20} />
                       </a>
                    </div>
-
-                   <p className="text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-relaxed">
-                      Reserva finalizada via Airbnb.
-                   </p>
                 </div>
              </div>
           </div>
         </div>
         
-        {/* Explore Similar */}
         {similarProperties.length > 0 && (
           <div className="mt-24 pt-24 border-t border-gray-100">
              <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
                 <div>
-                  <div className="flex items-center gap-2 text-xs font-black text-brand-red uppercase tracking-[0.2em] mb-4">
-                    <Sparkles size={16} /> Recomendações
-                  </div>
-                  <h3 className="text-3xl md:text-5xl font-black text-neutral-900">Explore similares</h3>
+                  <h3 className="text-3xl md:text-5xl font-black text-neutral-900">{t('prop.similar')}</h3>
                 </div>
-                <Link to="/imoveis" className="text-brand-red font-black text-xs uppercase tracking-widest flex items-center gap-2 hover:underline">
-                  Ver todas <ArrowRight size={18} />
-                </Link>
              </div>
-             
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {similarProperties.map(prop => (
                   <PropertyCard key={prop.id} property={prop} />

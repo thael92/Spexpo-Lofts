@@ -1,29 +1,48 @@
-import { Property } from '../types';
+import { Property, Language } from '../types';
 
-// Base mock data for the 80 properties
-const generateProperties = (): Property[] => {
+// Função auxiliar para traduzir tipos de imóveis
+const translateType = (type: string, lang: Language) => {
+  if (lang === 'pt') return type;
+  if (lang === 'en') {
+    if (type === 'Casa') return 'House';
+    return type;
+  }
+  if (lang === 'es') {
+    if (type === 'Apartamento') return 'Departamento';
+    if (type === 'Casa') return 'Casa';
+    return type;
+  }
+  return type;
+};
+
+const translateDescription = (bairro: string, lang: Language) => {
+  if (lang === 'en') return `Located in the ${bairro} region, this Spexpo accommodation offers total practicality. Equipped with full linen, high-speed Wi-Fi and custom furniture, it is the ideal choice for those seeking comfort and proximity to event centers and the subway.`;
+  if (lang === 'es') return `Ubicado en la región de ${bairro}, este alojamiento de Spexpo ofrece total practicidad. Equipado con ropa de cama completa, Wi-Fi de alta velocidad y muebles a medida, es la opción ideal para quienes buscan comodidad y cercanía a centros de eventos y al metro.`;
+  return `Localizada na região de ${bairro}, esta hospedagem da Spexpo oferece total praticidade. Equipada com enxoval completo, Wi-Fi de alta velocidade e móveis planejados, é a escolha ideal para quem busca conforto e proximidade com centros de eventos e metrô.`;
+};
+
+const translateTitle = (type: string, bairro: string, i: number, lang: Language) => {
+  const typeTrans = translateType(type, lang);
+  if (lang === 'en') return `Modern ${typeTrans} ${bairro} - Unit ${String(i).padStart(2, '0')}`;
+  if (lang === 'es') return `${typeTrans} Moderno ${bairro} - Unidad ${String(i).padStart(2, '0')}`;
+  return `${typeTrans} Moderno ${bairro} - Unidade ${String(i).padStart(2, '0')}`;
+};
+
+const generateProperties = (lang: Language = 'pt'): Property[] => {
   const properties: Property[] = [];
   const types = ["Loft", "Studio", "Apartamento"] as const;
-  // Locais reais fornecidos pelo usuário
-  const bairros = [
-    "Imigrantes", 
-    "Fachini", 
-    "Conceição", 
-    "Jabaquara", 
-    "Butantã", 
-    "Santo Amaro"
-  ];
+  const bairros = ["Imigrantes", "Fachini", "Conceição", "Jabaquara", "Butantã", "Santo Amaro"];
   
-  // Create 80 properties
   for (let i = 1; i <= 80; i++) {
     const type = types[Math.floor(Math.random() * types.length)];
     const bairro = bairros[Math.floor(Math.random() * bairros.length)];
-    const quartos = Math.random() > 0.7 ? 2 : 1; 
+    // Todos os imóveis agora possuem exatamente 1 quarto
+    const quartos = 1; 
     
     properties.push({
       id: `sp-${String(i).padStart(3, '0')}`,
       slug: `hospedagem-${bairro.toLowerCase()}-${i}`,
-      titulo: `Loft Moderno ${bairro} - Unidade ${String(i).padStart(2, '0')}`,
+      titulo: translateTitle(type, bairro, i, lang),
       preco: 190 + Math.floor(Math.random() * 300), 
       tipo: type as any,
       status: "aluguel",
@@ -39,7 +58,7 @@ const generateProperties = (): Property[] => {
         uf: "SP",
         cep: "04311-000"
       },
-      descricao: `Localizada na região de ${bairro}, esta hospedagem da Spexpo oferece total praticidade. Equipada com enxoval completo, Wi-Fi de alta velocidade e móveis planejados, é a escolha ideal para quem busca conforto e proximidade com centros de eventos e metrô.`,
+      descricao: translateDescription(bairro, lang),
       imagens: [
           `https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1000&auto=format&fit=crop&sig=${i}`,
           `https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=1000&auto=format&fit=crop&sig=${i+100}`,
@@ -54,12 +73,13 @@ const generateProperties = (): Property[] => {
   return properties;
 };
 
-const ALL_PROPERTIES = generateProperties();
-
 export const fetchProperties = async (page = 1, limit = 12, filters?: any): Promise<{ data: Property[], total: number }> => {
+  const currentLang = (localStorage.getItem('spexpo_lang') || 'pt') as Language;
+  const allProps = generateProperties(currentLang);
+  
   await new Promise(resolve => setTimeout(resolve, 400));
 
-  let filtered = ALL_PROPERTIES;
+  let filtered = allProps;
 
   if (filters) {
     if (filters.search) {
@@ -73,7 +93,6 @@ export const fetchProperties = async (page = 1, limit = 12, filters?: any): Prom
     if (filters.type && filters.type !== 'Todos') {
       filtered = filtered.filter(p => p.tipo === filters.type);
     }
-    // Filtro por Bairro (Região)
     if (filters.bairro && filters.bairro !== 'Todas as Regiões') {
       filtered = filtered.filter(p => p.endereco.bairro === filters.bairro);
     }
@@ -89,11 +108,15 @@ export const fetchProperties = async (page = 1, limit = 12, filters?: any): Prom
 };
 
 export const fetchPropertyById = async (id: string): Promise<Property | undefined> => {
+  const currentLang = (localStorage.getItem('spexpo_lang') || 'pt') as Language;
+  const allProps = generateProperties(currentLang);
   await new Promise(resolve => setTimeout(resolve, 200));
-  return ALL_PROPERTIES.find(p => p.id === id);
+  return allProps.find(p => p.id === id);
 };
 
 export const fetchFeaturedProperties = async (): Promise<Property[]> => {
+  const currentLang = (localStorage.getItem('spexpo_lang') || 'pt') as Language;
+  const allProps = generateProperties(currentLang);
   await new Promise(resolve => setTimeout(resolve, 200));
-  return ALL_PROPERTIES.filter(p => p.destaque);
+  return allProps.filter(p => p.destaque);
 };
