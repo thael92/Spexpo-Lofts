@@ -20,6 +20,7 @@ export interface Property {
   area_m2: number;
   bedrooms: number;
   bathrooms: number;
+  maxGuests?: number; // Nova propriedade
   parking: number;
   condo_fee?: number;
   iptu?: number;
@@ -31,6 +32,16 @@ export interface Property {
   airbnb_url?: string;
   ical_url?: string;
   map_iframe_url?: string;
+  translations?: {
+    en?: {
+      title?: string;
+      description?: string;
+    };
+    es?: {
+      title?: string;
+      description?: string;
+    };
+  };
 }
 
 export interface FilterState {

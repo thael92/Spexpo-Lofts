@@ -92,6 +92,7 @@ const LoftForm: React.FC = () => {
 
     // Estado e manipuladores de Fotos
     const [imageUrlInput, setImageUrlInput] = useState('');
+    const [activeTab, setActiveTab] = useState<'pt' | 'en' | 'es'>('pt');
 
     const handleAddPhotoByUrl = () => {
         if (imageUrlInput.trim()) {
@@ -105,6 +106,24 @@ const LoftForm: React.FC = () => {
             ...prev,
             photos: prev.photos?.filter((_, i) => i !== index)
         }));
+    };
+
+    // Handler de Traduções
+    const handleTranslationChange = (lang: 'en' | 'es' | 'pt', field: 'title' | 'description', value: string) => {
+        if (lang === 'pt') {
+            setLoft(prev => ({ ...prev, [field]: value }));
+        } else {
+            setLoft(prev => ({
+                ...prev,
+                translations: {
+                    ...prev.translations,
+                    [lang]: {
+                        ...prev.translations?.[lang],
+                        [field]: value
+                    }
+                }
+            }));
+        }
     };
 
     // Função de Salvar (Submit)
@@ -148,16 +167,37 @@ const LoftForm: React.FC = () => {
                 <div className="bg-gray-50 p-5 rounded-xl border border-gray-100">
                     <h3 className="mb-4 text-lg font-medium text-gray-900 border-b pb-2">Informações Básicas</h3>
 
+                    {/* Tabs de Tradução */}
+                    <div className="mb-4 flex space-x-2 border-b border-gray-200">
+                        {['pt', 'en', 'es'].map((lang) => (
+                            <button
+                                key={lang}
+                                type="button"
+                                onClick={() => setActiveTab(lang as 'pt' | 'en' | 'es')}
+                                className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${activeTab === lang
+                                    ? 'bg-white border-x border-t border-gray-200 text-brand-red'
+                                    : 'bg-gray-100 text-gray-500 hover:text-gray-700'
+                                    }`}
+                            >
+                                {lang === 'pt' ? 'Português (Padrão)' : lang === 'en' ? 'Inglês' : 'Espanhol'}
+                            </button>
+                        ))}
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div className="col-span-1 md:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Título do Anúncio</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Título do Anúncio ({activeTab.toUpperCase()})</label>
                             <input
                                 type="text"
-                                name="title"
-                                value={loft.title}
-                                onChange={handleChange}
+                                value={
+                                    activeTab === 'pt'
+                                        ? loft.title
+                                        : (loft.translations?.[activeTab]?.title || '')
+                                }
+                                onChange={(e) => handleTranslationChange(activeTab, 'title', e.target.value)}
                                 className="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-red focus:ring focus:ring-red-200 p-2 border"
-                                required
+                                required={activeTab === 'pt'}
+                                placeholder={activeTab === 'pt' ? "Ex: Loft Moderno..." : "Ex: Modern Loft..."}
                             />
                         </div>
 
@@ -172,6 +212,7 @@ const LoftForm: React.FC = () => {
                                 <option value="Loft">Loft</option>
                                 <option value="Apartamento">Apartamento</option>
                                 <option value="Studio">Studio</option>
+                                <option value="Casa">Casa</option>
                             </select>
                         </div>
 
@@ -192,17 +233,21 @@ const LoftForm: React.FC = () => {
                     </div>
 
                     <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Descrição ({activeTab.toUpperCase()})</label>
                         <textarea
-                            name="description"
-                            value={loft.description}
-                            onChange={handleChange}
+                            value={
+                                activeTab === 'pt'
+                                    ? loft.description
+                                    : (loft.translations?.[activeTab]?.description || '')
+                            }
+                            onChange={(e) => handleTranslationChange(activeTab, 'description', e.target.value)}
                             rows={4}
                             className="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-red focus:ring focus:ring-red-200 p-2 border"
+                            placeholder={activeTab === 'pt' ? "Descrição detalhada..." : "Detailed description..."}
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Área (m²)</label>
                             <input
@@ -219,6 +264,16 @@ const LoftForm: React.FC = () => {
                                 type="number"
                                 name="bedrooms"
                                 value={loft.bedrooms}
+                                onChange={handleChange}
+                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-red focus:ring focus:ring-red-200 p-2 border"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Capacidade (Pessoas)</label>
+                            <input
+                                type="number"
+                                name="maxGuests"
+                                value={loft.maxGuests || 4}
                                 onChange={handleChange}
                                 className="w-full rounded-md border-gray-300 shadow-sm focus:border-brand-red focus:ring focus:ring-red-200 p-2 border"
                             />

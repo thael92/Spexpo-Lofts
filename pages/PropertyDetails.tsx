@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { fetchPropertyById, fetchProperties } from '../services/propertyService';
-import { Property } from '../types';
+import { Property, Language } from '../types';
 import {
    MapPin, BedDouble, Bath, Car, Square, ChevronLeft, Users,
    CheckCircle2, Map as MapIcon, ArrowRight, Info, Minus, Plus,
@@ -13,18 +13,24 @@ import { AvailabilityCalendar } from '../components/AvailabilityCalendar';
 import { PhotoGalleryModal } from '../components/PhotoGalleryModal';
 import { PropertyCard } from '../components/PropertyCard';
 import { useLanguage } from '../contexts/LanguageContext';
+import { AMENITIES_OPTIONS } from '../components/Admin/AmenitiesConfig';
 
-const getIcon = (feature: string) => {
-   const f = feature.toLowerCase();
-   if (f.includes('wi-fi') || f.includes('internet')) return <Wifi size={20} />;
-   if (f.includes('ar-condicionado') || f.includes('clima')) return <Wind size={20} />;
-   if (f.includes('tv') || f.includes('netflix')) return <Tv size={20} />;
-   if (f.includes('café') || f.includes('nespresso')) return <Coffee size={20} />;
-   if (f.includes('cozinha') || f.includes('fogão')) return <Utensils size={20} />;
-   if (f.includes('check-in') || f.includes('senha')) return <Key size={20} />;
-   if (f.includes('vaga') || f.includes('estacionamento')) return <Car size={20} />;
-   if (f.includes('segurança')) return <Shield size={20} />;
-   return <CheckCircle2 size={20} />;
+const getAmenityInfo = (feature: string, lang: Language) => {
+   // Tenta achar por ID
+   const optionById = AMENITIES_OPTIONS.find(opt => opt.id === feature);
+   if (optionById) {
+      if (lang === 'en') return { label: optionById.label_en || optionById.label, icon: optionById.icon };
+      if (lang === 'es') return { label: optionById.label_es || optionById.label, icon: optionById.icon };
+      return { label: optionById.label, icon: optionById.icon };
+   }
+
+   // Fallback: tenta achar por label (compatibilidade com dados antigos)
+   const optionByLabel = AMENITIES_OPTIONS.find(opt => opt.label.toLowerCase() === feature.toLowerCase());
+   if (optionByLabel) {
+      return { label: optionByLabel.label, icon: optionByLabel.icon }; // Mantém label original se achou por label
+   }
+
+   return { label: feature, icon: CheckCircle2 };
 };
 
 export const PropertyDetails: React.FC = () => {
@@ -45,7 +51,7 @@ export const PropertyDetails: React.FC = () => {
    const [adults, setAdults] = useState(1);
    const [childrenCount, setChildrenCount] = useState(0);
 
-   const maxGuests = 4;
+   const maxGuests = property?.maxGuests || 4;
 
    useEffect(() => {
       window.scrollTo(0, 0);
@@ -62,7 +68,7 @@ export const PropertyDetails: React.FC = () => {
             setLoading(false);
          });
       }
-   }, [id, language]); // Re-carrega se o idioma mudar para traduzir textos dinâmicos se houver
+   }, [id, language]);
 
    useEffect(() => {
       if (checkIn && checkOut) {
@@ -88,7 +94,13 @@ export const PropertyDetails: React.FC = () => {
 
    const getReservationUrl = () => {
       if (!property) return "#";
-      const baseUrl = property.airbnb_url || "https://www.airbnb.com.br/rooms/1553101057890730646";
+      let baseUrl = property.airbnb_url || "https://www.airbnb.com.br/rooms/1553101057890730646";
+
+      // Ensure absolute URL
+      if (baseUrl && !baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
+         baseUrl = `https://${baseUrl}`;
+      }
+
       let url = baseUrl;
       const params: string[] = [];
       if (checkIn && checkOut) {
@@ -119,15 +131,15 @@ export const PropertyDetails: React.FC = () => {
       <Link to="/imoveis" className="text-brand-red hover:underline">Back</Link>
    </div>;
 
-   const localeMap = { pt: 'pt-BR', en: 'en-US', es: 'es-ES' };
-   const formatter = new Intl.NumberFormat(localeMap[language], { style: 'currency', currency: 'BRL' });
-   const totalValue = nights * property.price;
-
    const displayedAmenities = showAllAmenities
       ? property.features
       : property.features.slice(0, 6);
 
    const allImages = property.photos;
+
+   // Translation Fallback Logic
+   const displayTitle = property.translations?.[language]?.title || property.title;
+   const displayDescription = property.translations?.[language]?.description || property.description;
 
    return (
       <div className="bg-white min-h-screen pb-20 pt-20">
@@ -152,7 +164,7 @@ export const PropertyDetails: React.FC = () => {
                      {property.type} {language === 'pt' ? 'em' : language === 'en' ? 'in' : 'en'} {property.address.neighborhood}
                   </div>
                   <h1 className="text-3xl md:text-5xl font-black text-neutral-900 leading-tight">
-                     {property.title}
+                     {displayTitle}
                   </h1>
                   <div className="flex items-center gap-2 text-gray-500 mt-4 text-sm font-medium">
                      <MapPin size={18} className="text-brand-red" />
@@ -198,7 +210,7 @@ export const PropertyDetails: React.FC = () => {
                         <div className="p-3 bg-gray-50 rounded-xl text-brand-red"><Users size={24} /></div>
                         <div>
                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{t('prop.guests')}</p>
-                           <p className="font-bold text-gray-900">Até 4</p>
+                           <p className="font-bold text-gray-900">Até {maxGuests}</p>
                         </div>
                      </div>
                      <div className="flex items-center gap-3">
@@ -230,7 +242,7 @@ export const PropertyDetails: React.FC = () => {
                         {t('prop.desc')}
                      </h3>
                      <p className="text-gray-500 text-lg leading-relaxed font-light">
-                        {property.description}
+                        {displayDescription}
                      </p>
                   </div>
 
@@ -240,14 +252,17 @@ export const PropertyDetails: React.FC = () => {
                         {t('prop.amenities')}
                      </h3>
                      <div className="grid grid-cols-2 md:grid-cols-3 gap-y-8 gap-x-4">
-                        {displayedAmenities.map((feature, idx) => (
-                           <div key={idx} className="flex items-center gap-4">
-                              <div className="w-12 h-12 bg-neutral-900 text-white rounded-xl flex items-center justify-center shrink-0">
-                                 {getIcon(feature)}
+                        {displayedAmenities.map((feature, idx) => {
+                           const amenityInfo = getAmenityInfo(feature, language);
+                           return (
+                              <div key={idx} className="flex items-center gap-4">
+                                 <div className="w-12 h-12 bg-neutral-900 text-white rounded-xl flex items-center justify-center shrink-0">
+                                    <amenityInfo.icon size={20} />
+                                 </div>
+                                 <span className="font-bold text-neutral-800 text-xs md:text-sm uppercase tracking-tight">{amenityInfo.label}</span>
                               </div>
-                              <span className="font-bold text-neutral-800 text-xs md:text-sm uppercase tracking-tight">{feature}</span>
-                           </div>
-                        ))}
+                           );
+                        })}
                      </div>
                   </div>
 
@@ -268,15 +283,6 @@ export const PropertyDetails: React.FC = () => {
 
                <div className="lg:w-1/3">
                   <div className="sticky top-28 bg-white border border-gray-100 rounded-[2rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.1)] p-8">
-                     <div className="flex justify-between items-end mb-8">
-                        <div>
-                           <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">{t('prop.price_from')}</p>
-                           <div className="flex items-baseline gap-1">
-                              <span className="text-4xl font-black text-neutral-900">{formatter.format(property.price).split(',')[0]}</span>
-                              <span className="text-sm font-bold text-gray-400">/{t('prop.night')}</span>
-                           </div>
-                        </div>
-                     </div>
 
                      <div className="space-y-6">
                         <AvailabilityCalendar icalUrl={property.ical_url} onRangeChange={handleRangeChange} />
@@ -287,10 +293,7 @@ export const PropertyDetails: React.FC = () => {
                                  <span>{t('prop.summary')}</span>
                                  <span>{nights} {t('prop.nights')}</span>
                               </div>
-                              <div className="flex justify-between items-center pt-4 border-t border-white/10">
-                                 <span className="text-lg font-black uppercase tracking-tighter">{t('prop.total')}</span>
-                                 <span className="text-2xl font-black">{formatter.format(totalValue)}</span>
-                              </div>
+                              {/* Removed Total Price Calculation as requested */}
                            </div>
                         )}
 
