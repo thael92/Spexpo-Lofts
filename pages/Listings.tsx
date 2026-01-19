@@ -17,7 +17,7 @@ export const Listings: React.FC = () => {
   const [filters, setFilters] = useState<any>({
     search: '',
     type: 'Todos',
-    bairro: 'Todas as Regiões'
+    neighborhood: 'Todas as Regiões'
   });
 
   const bairros = [
@@ -42,7 +42,7 @@ export const Listings: React.FC = () => {
   useEffect(() => {
     const load = async () => {
       setLoading(true);
-      const res = await fetchProperties(page, 50, { ...filters, bairro: selectedBairro });
+      const res = await fetchProperties(page, 50, { ...filters, neighborhood: selectedBairro });
       setProperties(res.data);
       setLoading(false);
     };

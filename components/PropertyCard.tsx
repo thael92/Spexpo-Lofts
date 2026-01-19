@@ -14,12 +14,12 @@ export const PropertyCard: React.FC<{ property: Property }> = ({ property }) => 
 
   const nextImg = (e: React.MouseEvent) => {
     e.preventDefault();
-    setCurrentImg((prev) => (prev + 1) % property.imagens.length);
+    setCurrentImg((prev) => (prev + 1) % property.photos.length);
   };
 
   const prevImg = (e: React.MouseEvent) => {
     e.preventDefault();
-    setCurrentImg((prev) => (prev === 0 ? property.imagens.length - 1 : prev - 1));
+    setCurrentImg((prev) => (prev === 0 ? property.photos.length - 1 : prev - 1));
   };
 
   return (
@@ -43,8 +43,8 @@ export const PropertyCard: React.FC<{ property: Property }> = ({ property }) => 
       <div className="relative aspect-[16/11] overflow-hidden bg-gray-100 group/img">
         <Link to={`/imoveis/${property.id}`}>
           <img 
-            src={property.imagens[currentImg]} 
-            alt={property.titulo} 
+            src={property.photos[currentImg]} 
+            alt={property.title} 
             className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
           />
           
@@ -71,7 +71,7 @@ export const PropertyCard: React.FC<{ property: Property }> = ({ property }) => 
 
           {/* Indicadores (Dots) */}
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-1.5">
-            {property.imagens.map((_, idx) => (
+            {property.photos.map((_, idx) => (
               <div 
                 key={idx} 
                 className={`h-2 rounded-full transition-all duration-300 ${idx === currentImg ? 'w-4 bg-white' : 'w-2 bg-white/40'}`}
@@ -86,7 +86,7 @@ export const PropertyCard: React.FC<{ property: Property }> = ({ property }) => 
         
         <Link to={`/imoveis/${property.id}`} className="block w-full">
             <h3 className="text-[1.35rem] font-extrabold text-[#111] leading-tight mb-4 group-hover:text-brand-red transition-colors">
-                {property.titulo}
+                {property.title}
             </h3>
         </Link>
         
@@ -94,14 +94,14 @@ export const PropertyCard: React.FC<{ property: Property }> = ({ property }) => 
         <div className="flex items-center gap-3 text-[13px] font-medium text-gray-400 mb-2">
             <span>Até {pessoas} pessoas</span>
             <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-            <span>{property.quartos} {property.quartos > 1 ? 'quartos' : 'quarto'}</span>
+            <span>{property.bedrooms} {property.bedrooms > 1 ? 'quartos' : 'quarto'}</span>
             <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-            <span>{property.banheiros} {property.banheiros > 1 ? 'banheiros' : 'banheiro'}</span>
+            <span>{property.bathrooms} {property.bathrooms > 1 ? 'banheiros' : 'banheiro'}</span>
         </div>
 
         {/* Tags de Comodidades (Segunda linha da foto) */}
         <div className="flex flex-wrap justify-center gap-3 text-[12px] font-medium text-gray-400">
-            {property.caracteristicas.slice(0, 2).map((feature, idx) => (
+            {property.features.slice(0, 2).map((feature, idx) => (
               <React.Fragment key={idx}>
                 {idx > 0 && <span className="w-1 h-1 bg-gray-300 rounded-full mt-1.5"></span>}
                 <span className="lowercase italic">{feature}</span>
@@ -113,10 +113,10 @@ export const PropertyCard: React.FC<{ property: Property }> = ({ property }) => 
         <div className="mt-8 w-full flex items-center justify-between border-t border-gray-50 pt-6">
            <div className="text-left">
               <span className="text-[10px] font-black uppercase tracking-widest text-gray-300 block">A partir de</span>
-              <span className="text-xl font-black text-[#111]">R$ {property.preco}</span>
+              <span className="text-xl font-black text-[#111]">R$ {property.price}</span>
            </div>
            <div className="text-right">
-              <span className="text-[10px] font-black uppercase tracking-widest text-brand-red block">{property.endereco.bairro}</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-brand-red block">{property.address.neighborhood}</span>
               <span className="text-[10px] font-bold text-gray-400">São Paulo, SP</span>
            </div>
         </div>

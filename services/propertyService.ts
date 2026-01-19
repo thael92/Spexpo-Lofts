@@ -1,6 +1,6 @@
 import { Property, Language } from '../types';
 
-// Função auxiliar para traduzir tipos de imóveis
+// Funções de tradução (mantidas como estão)
 const translateType = (type: string, lang: Language) => {
   if (lang === 'pt') return type;
   if (lang === 'en') {
@@ -36,46 +36,95 @@ const generateProperties = (lang: Language = 'pt'): Property[] => {
   for (let i = 1; i <= 80; i++) {
     const type = types[Math.floor(Math.random() * types.length)];
     const bairro = bairros[Math.floor(Math.random() * bairros.length)];
-    // Todos os imóveis agora possuem exatamente 1 quarto
     const quartos = 1; 
     
     properties.push({
       id: `sp-${String(i).padStart(3, '0')}`,
       slug: `hospedagem-${bairro.toLowerCase()}-${i}`,
-      titulo: translateTitle(type, bairro, i, lang),
-      preco: 190 + Math.floor(Math.random() * 300), 
-      tipo: type as any,
+      title: translateTitle(type, bairro, i, lang),
+      price: 190 + Math.floor(Math.random() * 300), 
+      type: type as any,
       status: "aluguel",
       area_m2: 25 + Math.floor(Math.random() * 25),
-      quartos: quartos,
-      banheiros: 1,
-      vagas: i % 4 === 0 ? 1 : 0,
-      condominio: 0,
-      endereco: {
-        rua: `Rua Localizada em ${bairro}, ${100 + i}`,
-        bairro: bairro,
-        cidade: "São Paulo",
-        uf: "SP",
-        cep: "04311-000"
+      bedrooms: quartos,
+      bathrooms: 1,
+      parking: i % 4 === 0 ? 1 : 0,
+      condo_fee: 0,
+      address: {
+        street: `Rua Localizada em ${bairro}, ${100 + i}`,
+        neighborhood: bairro,
+        city: "São Paulo",
+        state: "SP",
+        zip: "04311-000"
       },
-      descricao: translateDescription(bairro, lang),
-      imagens: [
+      description: translateDescription(bairro, lang),
+      photos: [
           `https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1000&auto=format&fit=crop&sig=${i}`,
           `https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=1000&auto=format&fit=crop&sig=${i+100}`,
           `https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=1000&auto=format&fit=crop&sig=${i+200}`
       ],
-      destaque: i <= 8,
-      caracteristicas: ["wi-fi 500mb", "smart tv", "self check-in", "cama queen", "ar-condicionado"],
-      airbnbUrl: `https://www.airbnb.com.br/rooms/1553101057890730646`,
-      icalUrl: `https://www.airbnb.com.br/calendar/ical/1553101057890730646.ics?s=a6f2dbb1e63508441d685f149313b24b`
+      featured: i <= 8,
+      features: ["wi-fi 500mb", "smart tv", "self check-in", "cama queen", "ar-condicionado"],
+      airbnb_url: `https://www.airbnb.com.br/rooms/1553101057890730646`,
+      ical_url: `https://www.airbnb.com.br/calendar/ical/1553101057890730646.ics?s=a6f2dbb1e63508441d685f149313b24b`
     });
   }
   return properties;
 };
 
+const seedProperties = () => {
+    const properties = generateProperties('pt');
+    localStorage.setItem('properties', JSON.stringify(properties));
+    return properties;
+}
+
+export const getProperties = async (): Promise<Property[]> => {
+    const properties = localStorage.getItem('properties');
+    if (!properties) {
+        return seedProperties();
+    }
+    return JSON.parse(properties);
+}
+
+export const getPropertyById = async (id: string): Promise<Property | undefined> => {
+    const properties = await getProperties();
+    return properties.find(p => p.id === id);
+}
+
+export const addProperty = async (property: Partial<Property>): Promise<Property> => {
+    const properties = await getProperties();
+    const newProperty: Property = {
+        id: `sp-${String(properties.length + 1).padStart(3, '0')}`,
+        slug: `hospedagem-${property.title?.toLowerCase().replace(/ /g, '-')}`,
+        ...property
+    } as Property;
+    const newProperties = [...properties, newProperty];
+    localStorage.setItem('properties', JSON.stringify(newProperties));
+    return newProperty;
+}
+
+export const updateProperty = async (id: string, updates: Partial<Property>): Promise<Property | undefined> => {
+    const properties = await getProperties();
+    const index = properties.findIndex(p => p.id === id);
+    if (index === -1) {
+        return undefined;
+    }
+    const updatedProperty = { ...properties[index], ...updates };
+    const newProperties = [...properties];
+    newProperties[index] = updatedProperty;
+    localStorage.setItem('properties', JSON.stringify(newProperties));
+    return updatedProperty;
+}
+
+export const deleteProperty = async (id: string): Promise<void> => {
+    let properties = await getProperties();
+    properties = properties.filter(p => p.id !== id);
+    localStorage.setItem('properties', JSON.stringify(properties));
+}
+
 export const fetchProperties = async (page = 1, limit = 12, filters?: any): Promise<{ data: Property[], total: number }> => {
   const currentLang = (localStorage.getItem('spexpo_lang') || 'pt') as Language;
-  const allProps = generateProperties(currentLang);
+  const allProps = await getProperties();
   
   await new Promise(resolve => setTimeout(resolve, 400));
 
@@ -85,16 +134,16 @@ export const fetchProperties = async (page = 1, limit = 12, filters?: any): Prom
     if (filters.search) {
       const s = filters.search.toLowerCase();
       filtered = filtered.filter(p => 
-        p.titulo.toLowerCase().includes(s) || 
-        p.endereco.bairro.toLowerCase().includes(s) ||
-        p.endereco.rua.toLowerCase().includes(s)
+        p.title.toLowerCase().includes(s) || 
+        p.address.neighborhood.toLowerCase().includes(s) ||
+        p.address.street.toLowerCase().includes(s)
       );
     }
     if (filters.type && filters.type !== 'Todos') {
-      filtered = filtered.filter(p => p.tipo === filters.type);
+      filtered = filtered.filter(p => p.type === filters.type);
     }
-    if (filters.bairro && filters.bairro !== 'Todas as Regiões') {
-      filtered = filtered.filter(p => p.endereco.bairro === filters.bairro);
+    if (filters.neighborhood && filters.neighborhood !== 'Todas as Regiões') {
+      filtered = filtered.filter(p => p.address.neighborhood === filters.neighborhood);
     }
   }
 
@@ -109,14 +158,14 @@ export const fetchProperties = async (page = 1, limit = 12, filters?: any): Prom
 
 export const fetchPropertyById = async (id: string): Promise<Property | undefined> => {
   const currentLang = (localStorage.getItem('spexpo_lang') || 'pt') as Language;
-  const allProps = generateProperties(currentLang);
+  const allProps = await getProperties();
   await new Promise(resolve => setTimeout(resolve, 200));
   return allProps.find(p => p.id === id);
 };
 
 export const fetchFeaturedProperties = async (): Promise<Property[]> => {
   const currentLang = (localStorage.getItem('spexpo_lang') || 'pt') as Language;
-  const allProps = generateProperties(currentLang);
+  const allProps = await getProperties();
   await new Promise(resolve => setTimeout(resolve, 200));
-  return allProps.filter(p => p.destaque);
+  return allProps.filter(p => p.featured);
 };

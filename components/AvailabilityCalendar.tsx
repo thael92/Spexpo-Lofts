@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { fetchICalEvents, CalendarEvent } from '../services/icalService';
-import DatePicker from 'react-datepicker';
+import DatePicker, { registerLocale } from 'react-datepicker';
 import { Calendar } from 'lucide-react';
+import { ptBR, es, enUS } from 'date-fns/locale';
+import { useLanguage } from '../contexts/LanguageContext';
+import './AvailabilityCalendar.css';
+
+// Registrar os locales
+registerLocale('pt', ptBR);
+registerLocale('es', es);
+registerLocale('en', enUS);
 
 interface AvailabilityCalendarProps {
   icalUrl?: string;
@@ -13,6 +21,7 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({ ical
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [excludedDates, setExcludedDates] = useState<Date[]>([]);
+  const { language, t } = useLanguage();
 
   useEffect(() => {
     if (icalUrl) {
@@ -50,7 +59,7 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({ ical
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
       <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
-        <Calendar size={16} /> Selecione as Datas
+        <Calendar size={16} /> {t('prop.reserve')}
       </h3>
       <DatePicker
         selected={startDate}
@@ -61,8 +70,8 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({ ical
         }}
         startDate={startDate}
         endDate={endDate}
-        excludeDates={excludedDates} 
-        filterDate={filterPassedDays} 
+        excludeDates={excludedDates}
+        filterDate={filterPassedDays}
         selectsRange
         inline
         monthsShown={1}
@@ -72,6 +81,7 @@ export const AvailabilityCalendar: React.FC<AvailabilityCalendarProps> = ({ ical
         calendarClassName="border-0 shadow-none"
         dateFormat="dd/MM/yyyy"
         formatWeekDay={(nameOfDay) => nameOfDay.substring(0, 1)}
+        locale={language}
       />
     </div>
   );

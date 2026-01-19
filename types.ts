@@ -1,11 +1,11 @@
 export type Language = 'pt' | 'en' | 'es';
 
 export interface Address {
-  rua: string;
-  bairro: string;
-  cidade: string;
-  uf: string;
-  cep: string;
+  street: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zip: string;
   lat?: number;
   lng?: number;
 }
@@ -13,23 +13,24 @@ export interface Address {
 export interface Property {
   id: string;
   slug: string;
-  titulo: string;
-  preco: number;
-  tipo: 'Loft' | 'Apartamento' | 'Studio' | 'Casa';
+  title: string;
+  price: number;
+  type: 'Loft' | 'Apartamento' | 'Studio' | 'Casa';
   status: 'aluguel' | 'venda';
   area_m2: number;
-  quartos: number;
-  banheiros: number;
-  vagas: number;
-  condominio?: number;
+  bedrooms: number;
+  bathrooms: number;
+  parking: number;
+  condo_fee?: number;
   iptu?: number;
-  endereco: Address;
-  descricao: string;
-  imagens: string[];
-  destaque: boolean;
-  caracteristicas: string[];
-  airbnbUrl?: string;
-  icalUrl?: string;
+  address: Address;
+  description: string;
+  photos: string[];
+  featured: boolean;
+  features: string[];
+  airbnb_url?: string;
+  ical_url?: string;
+  map_iframe_url?: string;
 }
 
 export interface FilterState {
